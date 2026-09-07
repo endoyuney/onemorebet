@@ -373,7 +373,7 @@ var CONFIG = {
     { id:'sadcoin',  name:'SAD COIN',            desc:'Lose 100 coin flips',               cosmetic:'Sad Coin' },
     { id:'cloth',    name:'GOLDEN TABLECLOTH',   desc:'Hit your first jackpot',            cosmetic:'Golden Tablecloth' },
     { id:'neon',     name:'NEON SIGN',           desc:'Complete J-A-C-K-P-O-T',            cosmetic:'Neon Sign' },
-    { id:'cat',      name:'LUCKY CAT',           desc:'Bust 10 times',                     cosmetic:'Lucky Cat' },
+    { id:'cat',      name:'LUCKY CAT',            desc:'Bust 10 times',                     cosmetic:'Lucky Cat' },
     { id:'pig',      name:'GOLD PIG',            desc:'Reach $10,000 in one run',          cosmetic:'Gold Pig' },
     { id:'stop',     name:'KNOWS WHEN TO STOP',  desc:'Bank a Jackpot Coin at step 3+',    cosmetic:'Silver Chip' }
   ],
@@ -426,7 +426,6 @@ function freshMeta(){
     stats: { flips:0, lostFlips:0, busts:0, coinJackpots:0, slotJackpots:0, words:0, cards:0, spins:0 }
   };
 }
-
 function rank(id){ return (S.meta.nodes[id]||0); }
 
 function freshRun(){
@@ -452,7 +451,6 @@ function freshRun(){
     started: Date.now()
   };
 }
-
 function coinBaseChance(){
   return CONFIG.coin.jackpot.baseChance + CONFIG.treeEffects.jluckPerRank * rank('jluck');
 }
@@ -641,7 +639,9 @@ function jcoinPush(){
   checkBust(); renderAll();
 }
 function jcoinTake(){
-  if (!S.run.jcoin.active) return;
+  // The first Jackpot Coin flip is mandatory. The starting pot is only a stake
+  // preview; it cannot be banked until the player survives at least one flip.
+  if (!S.run.jcoin.active || S.run.jcoin.step < 1) return;
   var pot = S.run.jcoin.pot, st = S.run.jcoin.step;
   addCash(pot);
   S.run.jcoin.active = false; S.run.jcoin.pot = 0; S.run.jcoin.step = 0;
@@ -1001,10 +1001,13 @@ function renderCoin(){
       '<div class="meterWrap"><div class="meterTop"><span>JACKPOT COIN LADDER · step ' + (jc.step+1) + '</span>' +
       '<span>next flip survives ' + pct(jcoinChance()) + '</span></div>' +
       '<div style="font-size:26px;font-weight:800;color:var(--gold);margin:6px 0">' + money(jc.pot) + '</div>' +
-      '<div class="row"><button class="btn gold" data-act="jpush">FLIP AGAIN</button>' +
-      '<button class="btn" data-act="jtake">TAKE ' + money(jc.pot) + '</button></div>' +
-      '<div class="hint">Every push multiplies the pot by ' + CONFIG.jcoin.growth + '× but the odds drop by ' +
-      pct(CONFIG.jcoin.chanceDecay,0) + ' each step. A failed push loses the whole pot.</div></div>';
+      '<div class="row"><button class="btn gold" data-act="jpush">' + (jc.step===0?'FLIP':'FLIP AGAIN') + '</button>' +
+      '<button class="btn" data-act="jtake"' + (jc.step<1?' disabled':'') + '>' +
+      (jc.step<1 ? 'TAKE AFTER A WIN' : 'TAKE ' + money(jc.pot)) + '</button></div>' +
+      '<div class="hint">' + (jc.step<1
+        ? 'The first flip is mandatory. Survive it to unlock TAKE.'
+        : 'Every push multiplies the pot by ' + CONFIG.jcoin.growth + '× but the odds drop by ' +
+          pct(CONFIG.jcoin.chanceDecay,0) + ' each step. A failed push loses the whole pot.') + '</div></div>';
   } else {
     ladder =
       '<div class="row"><button class="btn" data-act="jstart"' + (jc.charges<=0?' disabled':'') + '>' +
@@ -1152,7 +1155,7 @@ function renderSlot(){
   var pay = '';
   for (var j=0;j<CONFIG.slot.symbols.length;j++){
     var s = CONFIG.slot.symbols[j];
-    pay += '<div>' + s.g + s.g + s.g + ' <b>' + (s.k==='seven' ? 'THE POT' : money(s.p*stake())) + '</b></div>';
+    pay += '<div>' + s.g+s.g+s.g + ' <b>' + (s.k==='seven' ? 'THE POT' : money(s.p*stake())) + '</b></div>';
   }
   pay += '<div>🍒🍒 any two <b>' + money(CONFIG.slot.twoCherry*stake()) + '</b></div>';
 
@@ -1199,14 +1202,12 @@ function renderUpgrades(){
   out += '<div class="hint">These are wiped on every bust. Prices scale with the table you are sitting at.</div>';
   document.getElementById('ups').innerHTML = out;
 }
-
 function renderLog(){
   var out = '';
   for (var i=0;i<S.run.log.length;i++)
     out += '<div class="' + S.run.log[i].c + '">' + S.run.log[i].t + '</div>';
   document.getElementById('log').innerHTML = out;
 }
-
 function renderAll(){
   renderHUD(); renderCoin(); renderScratch(); renderSlot(); renderUpgrades();
 }
