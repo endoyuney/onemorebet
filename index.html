@@ -1,0 +1,2019 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ONE MORE BET v0.5 · Scratch Table + Skill Paths</title>
+<style>
+/* ============================================================
+   ONE MORE BET v0.1 - prototype stylesheet
+   ============================================================ */
+:root{
+  --felt:#0d3b2e; --felt-2:#0a2f24; --edge:#06201a;
+  --wood:#3d2317; --gold:#e8c46a; --gold-dim:#a98f45;
+  --ink:#f2ede1; --ink-dim:#a79f8d;
+  --win:#5fd68a; --lose:#e2645c; --warn:#f0b429;
+  --panel:#123f33; --panel-hi:#1a5544; --line:#0a2b22;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--edge);
+  color:var(--ink);
+  font:14px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif;
+  min-height:100vh;
+}
+body.cloth-gold{--felt:#4a3410;--felt-2:#3a2a0c;--panel:#5a4114;--panel-hi:#6d5019;--line:#2e2109}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+button:disabled{cursor:not-allowed;opacity:.42}
+
+#wrap{max-width:1180px;margin:0 auto;padding:10px 14px 60px}
+
+/* ---------- HUD ---------- */
+#hud{
+  position:sticky;top:0;z-index:40;
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  background:linear-gradient(180deg,#132e26,#0b241d);
+  border:1px solid var(--line);border-radius:10px;
+  padding:9px 14px;margin-bottom:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.45);
+}
+.brand{font-weight:800;letter-spacing:.13em;color:var(--gold);white-space:nowrap}
+.brand small{color:var(--ink-dim);font-weight:600;letter-spacing:.06em;margin-left:6px}
+.stat{display:flex;flex-direction:column;line-height:1.1}
+.stat label{font-size:9.5px;letter-spacing:.16em;color:var(--ink-dim)}
+.stat b{font-size:17px;font-variant-numeric:tabular-nums}
+.stat b.cash{color:var(--gold)}
+#hudBtns{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap}
+.btn{
+  background:var(--panel);border:1px solid var(--line);border-radius:7px;
+  padding:7px 12px;font-size:12px;font-weight:700;letter-spacing:.05em;
+  transition:background .12s,transform .06s;
+}
+.btn:hover:not(:disabled){background:var(--panel-hi)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn.gold{background:var(--gold);color:#241a05;border-color:#8a7127}
+.btn.gold:hover:not(:disabled){background:#f3d689}
+.btn.big{padding:13px 22px;font-size:16px;letter-spacing:.1em}
+.btn.danger{background:#5c2320;border-color:#3a1512}
+
+/* ---------- layout ---------- */
+#main{display:grid;grid-template-columns:1fr 320px;gap:12px;align-items:start}
+@media(max-width:880px){#main{grid-template-columns:1fr}}
+
+/* ---------- toy panels ---------- */
+.toy{
+  background:radial-gradient(120% 140% at 50% 0%,var(--felt),var(--felt-2));
+  border:1px solid var(--line);border-radius:12px;
+  margin-bottom:12px;overflow:hidden;
+  opacity:.9;
+}
+.toy.active{
+  opacity:1;
+  border-color:var(--gold-dim);
+  box-shadow:0 0 0 1px rgba(232,196,106,.18),0 10px 24px rgba(0,0,0,.4);
+}
+.toy.locked{opacity:.42;filter:saturate(.3)}
+.toyHead{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:9px 13px;background:rgba(0,0,0,.22);border-bottom:1px solid var(--line);
+}
+.toyHead h2{margin:0;font-size:14px;letter-spacing:.13em;font-weight:800}
+.toyHead .ico{font-size:19px}
+.tag{
+  font-size:9.5px;letter-spacing:.11em;font-weight:800;
+  padding:3px 7px;border-radius:20px;border:1px solid currentColor;
+}
+.tag.auto{color:var(--win)}
+.tag.wait{color:var(--ink-dim)}
+.tag.edge{color:var(--warn)}
+.tag.active{color:var(--gold)}
+.toyBody{padding:13px}
+.toy.small .toyBody{padding:9px 13px}
+
+/* ---------- coin swarm ---------- */
+.coinShop{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:9px;margin-bottom:10px}
+.shopCard{background:rgba(0,0,0,.17);border:1px solid var(--line);border-radius:9px;padding:9px 10px;min-height:112px}
+.shopCard.locked{opacity:.42;filter:saturate(.35);display:flex;flex-direction:column;justify-content:center}
+.shopTop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px}
+.shopName{font-weight:800;letter-spacing:.11em;font-size:11px}
+.shopOwned{font-size:10px;color:var(--ink-dim);white-space:nowrap}
+.shopStats{display:flex;gap:8px;flex-wrap:wrap;color:var(--ink-dim);font-size:10.5px;margin:5px 0 7px}
+.shopStats b{color:var(--ink)}
+.shopActions{display:flex;gap:6px;flex-wrap:wrap}
+.coinField{
+  position:relative;height:330px;overflow:hidden;
+  border:1px solid var(--line);border-radius:12px;
+  background:radial-gradient(110% 130% at 50% 20%,rgba(255,255,255,.035),rgba(0,0,0,.16));
+  box-shadow:inset 0 8px 30px rgba(0,0,0,.18);
+}
+.coinFieldTop{position:absolute;left:10px;right:10px;top:8px;z-index:5;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
+.coinFieldTop span{font-size:10px;letter-spacing:.12em;color:var(--ink-dim);background:rgba(3,18,14,.72);padding:4px 7px;border-radius:10px}
+.swarmCoin{
+  position:absolute;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-variant-numeric:tabular-nums;line-height:1;
+  box-shadow:inset 0 -5px 10px rgba(0,0,0,.34),0 7px 13px rgba(0,0,0,.34);
+  transition:filter .12s,box-shadow .12s,transform .12s;user-select:none;
+}
+.swarmCoin:hover:not(:disabled){filter:brightness(1.16);box-shadow:inset 0 -5px 10px rgba(0,0,0,.3),0 9px 17px rgba(0,0,0,.48);z-index:8!important}
+.swarmCoin.copper{background:radial-gradient(circle at 34% 30%,#f2b184,#a75c35 60%,#65301c);color:#3b190d;border:1px solid #7a3d22}
+.swarmCoin.silver{background:radial-gradient(circle at 34% 30%,#f1f4f5,#aeb8bc 60%,#626c70);color:#30383b;border:1px solid #758084}
+.swarmCoin.gold{background:radial-gradient(circle at 34% 30%,#fff0a5,#d7ae35 60%,#88651a);color:#4a3708;border:1px solid #9a7523}
+.swarmCoin.sad{filter:grayscale(.9)}
+.swarmCoin.spin{animation:swarmFlip .48s ease;z-index:20!important}
+@keyframes swarmFlip{0%{transform:var(--baseTransform) rotateY(0) translateY(0) scale(1)}45%{transform:var(--baseTransform) rotateY(540deg) translateY(-22px) scale(1.13)}100%{transform:var(--baseTransform) rotateY(1080deg) translateY(0) scale(1)}}
+.coinSwarmActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+@media(max-width:720px){.coinShop{grid-template-columns:1fr}.coinField{height:390px}}
+.coinRow{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.coinDisc{margin-bottom:9px}
+.coinTile .outcome{font-size:14px;min-height:20px;margin-top:5px}
+.coinTile .odds{justify-content:center;gap:7px;margin-top:7px}
+.coinDisc.copper{width:70px;height:70px;font-size:19px;background:radial-gradient(circle at 34% 30%,#f2b184,#a75c35 60%,#65301c);color:#3b190d}
+.coinDisc.silver{width:82px;height:82px;font-size:21px;background:radial-gradient(circle at 34% 30%,#f1f4f5,#aeb8bc 60%,#626c70);color:#30383b}
+.coinDisc.gold{width:96px;height:96px;font-size:22px;background:radial-gradient(circle at 34% 30%,#fff0a5,#d7ae35 60%,#88651a);color:#4a3708}
+.coinTrayActions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+@media(max-width:720px){.coinTray{grid-template-columns:1fr}.coinTile{min-height:170px}}
+.coinDisc{
+  width:88px;height:88px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#f7e4a8,#c9a13f 60%,#7d5f18);
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;color:#4a3708;font-weight:800;
+  box-shadow:inset 0 -5px 12px rgba(0,0,0,.35),0 6px 16px rgba(0,0,0,.45);
+  transition:transform .18s;
+  flex:none;
+}
+.coinDisc.sad{background:radial-gradient(circle at 34% 30%,#c9c9c9,#8a8a8a 60%,#4f4f4f)}
+.coinDisc.spin{animation:flip .42s ease}
+@keyframes flip{0%{transform:rotateY(0) scale(1)}50%{transform:rotateY(540deg) scale(1.12)}100%{transform:rotateY(1080deg) scale(1)}}
+.coinDisc.small{width:52px;height:52px;font-size:20px}
+.outcome{font-size:22px;font-weight:800;letter-spacing:.06em;min-height:28px}
+.outcome.win{color:var(--win)}
+.outcome.lose{color:var(--lose)}
+.meterWrap{margin-top:11px}
+.meterTop{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-dim);margin-bottom:4px}
+.meter{height:9px;background:rgba(0,0,0,.35);border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width .25s}
+
+/* ---------- odds strip ---------- */
+.odds{
+  display:flex;gap:14px;flex-wrap:wrap;margin-top:9px;
+  font-size:11px;color:var(--ink-dim);font-variant-numeric:tabular-nums;
+}
+.odds b{color:var(--ink);font-weight:700}
+
+/* ---------- scratch ---------- */
+.cards{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.scratchCard{
+  width:250px;background:#1c1a14;border:1px solid #3a3527;border-radius:9px;padding:10px;
+}
+.scratchCard h3{margin:0 0 8px;font-size:11px;letter-spacing:.13em;color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cell{
+  aspect-ratio:1/1;border-radius:6px;font-size:25px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(150deg,#9d9683,#6f6a5b);
+  border:1px solid #4d493d;color:transparent;
+  transition:background .15s;
+}
+.cell:hover:not(.rev){background:linear-gradient(150deg,#b0a88f,#807a68)}
+.cell.rev{background:#0f1b17;color:var(--ink);border-color:#24352d}
+.cell.rev.letter{background:#3a2c08;color:var(--gold);font-weight:800;font-size:22px}
+.word{display:flex;gap:5px;margin-top:10px;justify-content:center}
+.word span{
+  width:25px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:15px;border:1px solid #3d3626;background:#181712;color:#4a4437;
+}
+.word span.got{background:linear-gradient(180deg,#e8c46a,#a98f45);color:#2b2005;border-color:#8a7127}
+.ticketPile{font-size:12px;color:var(--gold);margin-top:8px}
+
+/* ---------- slot ---------- */
+.reels{display:flex;gap:9px}
+.reel{
+  width:74px;height:82px;border-radius:9px;background:#0f1b17;border:1px solid #24352d;
+  display:flex;align-items:center;justify-content:center;font-size:38px;
+}
+.reel.rolling{animation:shake .12s infinite}
+@keyframes shake{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* ---------- side ---------- */
+.side{position:sticky;top:66px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:11px;margin-bottom:12px;overflow:hidden}
+.box h3{margin:0;padding:8px 12px;font-size:11px;letter-spacing:.15em;background:rgba(0,0,0,.22);border-bottom:1px solid var(--line)}
+.box .inner{padding:10px 12px}
+.up{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  width:100%;text-align:left;padding:8px 9px;border-radius:7px;margin-bottom:6px;
+  background:rgba(0,0,0,.2);border:1px solid var(--line);
+}
+.up:hover:not(:disabled){background:rgba(255,255,255,.06)}
+.up .nm{font-weight:700;font-size:12px}
+.up .ds{font-size:10.5px;color:var(--ink-dim)}
+.up .pr{font-weight:800;color:var(--gold);white-space:nowrap;font-size:12px}
+#log{height:184px;overflow-y:auto;font-size:11.5px;font-variant-numeric:tabular-nums}
+#log div{padding:2px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.lg-win{color:var(--win)}.lg-lose{color:var(--lose)}.lg-big{color:var(--gold);font-weight:700}
+
+/* ---------- overlay ---------- */
+#ov{position:fixed;inset:0;z-index:90;background:rgba(3,12,9,.86);display:none;overflow-y:auto;padding:26px 14px}
+#ov.on{display:block}
+.sheet{
+  max-width:820px;margin:0 auto;background:linear-gradient(180deg,#14342b,#0d2620);
+  border:1px solid var(--gold-dim);border-radius:14px;padding:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+.sheet h2{margin:0 0 4px;letter-spacing:.16em;font-size:24px}
+.sheet .sub{color:var(--ink-dim);font-size:12.5px;margin-bottom:16px}
+.nodes{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:9px}
+.node{
+  text-align:left;padding:10px;border-radius:9px;border:1px solid var(--line);
+  background:rgba(0,0,0,.22);
+}
+.node:hover:not(:disabled){background:rgba(255,255,255,.06)}
+.node.max{border-color:var(--gold-dim);background:rgba(232,196,106,.1)}
+.node .nn{font-weight:800;font-size:12px;letter-spacing:.06em}
+.node .nd{font-size:10.5px;color:var(--ink-dim);margin:3px 0 6px}
+.node .nc{font-size:11px;font-weight:800;color:var(--gold)}
+.node .rk{font-size:10px;color:var(--ink-dim)}
+.bustNums{display:flex;gap:22px;flex-wrap:wrap;margin:14px 0 18px}
+.bustNums div{line-height:1.2}
+.bustNums span{display:block;font-size:9.5px;letter-spacing:.14em;color:var(--ink-dim)}
+.bustNums b{font-size:21px;font-variant-numeric:tabular-nums}
+textarea{width:100%;height:110px;background:#08201a;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px;font:11px/1.4 monospace}
+input[type=text],input[type=number]{background:#08201a;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:12px monospace}
+.decor{font-size:22px;letter-spacing:6px;margin-left:6px}
+#toast{position:fixed;right:14px;bottom:14px;z-index:95;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+.tst{background:var(--gold);color:#241a05;padding:9px 14px;border-radius:9px;font-weight:800;font-size:12.5px;box-shadow:0 8px 20px rgba(0,0,0,.5);animation:pop .25s}
+@keyframes pop{from{transform:translateY(8px);opacity:0}}
+.hint{font-size:11px;color:var(--ink-dim);margin-top:7px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:9px}
+
+/* ============================================================
+   v0.5 TABLE CHAOS OVERRIDES
+   Chaos lives on the felt; controls stay fixed.
+   ============================================================ */
+html,body{height:100%}
+body{overflow:hidden}
+#wrap{max-width:none;width:100%;height:100vh;padding:8px 10px 10px;display:flex;flex-direction:column}
+#hud{position:relative;top:auto;flex:none;margin-bottom:8px;border-radius:9px}
+#main{display:grid;grid-template-columns:292px minmax(0,1fr);gap:9px;min-height:0;flex:1;align-items:stretch}
+#rail{position:relative;top:auto;height:100%;overflow-y:auto;padding-right:4px;scrollbar-width:thin}
+#tableStage{position:relative;min-width:0;height:100%;overflow:hidden;border:3px solid #4c2b18;border-radius:18px;background:radial-gradient(125% 120% at 52% 28%,var(--felt),var(--felt-2) 68%,#061d17);box-shadow:inset 0 0 0 2px rgba(255,255,255,.025),inset 0 0 70px rgba(0,0,0,.42),0 12px 28px rgba(0,0,0,.44)}
+#pCoin{position:absolute;inset:0}
+.coinField{position:absolute;inset:0;height:auto;border:0;border-radius:0;background:none;box-shadow:none;overflow:hidden}
+.coinFieldTop{top:12px;left:14px;right:14px}
+.tableControlDock{position:absolute;left:14px;right:14px;bottom:13px;z-index:35;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;pointer-events:none}
+.tableControlDock>*{pointer-events:auto}
+.handControl{background:rgba(4,22,17,.9);border:1px solid var(--gold-dim);border-radius:11px;padding:10px;box-shadow:0 7px 22px rgba(0,0,0,.42);min-width:260px}
+.handControl .btn.big{width:100%;font-size:15px}
+.jackpotDock{flex:1;min-width:320px;background:rgba(4,22,17,.88);border:1px solid var(--line);border-radius:11px;padding:9px 11px;box-shadow:0 7px 22px rgba(0,0,0,.4)}
+.jackpotDock .meterWrap{margin:0}
+.jcoinDock{min-width:250px;max-width:380px;background:rgba(4,22,17,.88);border:1px solid var(--line);border-radius:11px;padding:9px 11px;box-shadow:0 7px 22px rgba(0,0,0,.4)}
+.swarmCoin{transition:filter .12s,box-shadow .12s;will-change:left,top,transform}
+.swarmCoin.jump{animation:coinJump .56s cubic-bezier(.2,.74,.25,1);z-index:30!important}
+.swarmCoin .coinFace{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;backface-visibility:hidden}
+.swarmCoin.jump .coinFace{animation:coinFaceFlip .56s ease}
+@keyframes coinJump{
+  0%{left:var(--old-x);top:var(--old-y);transform:rotate(var(--old-r)) translateY(0) scale(1)}
+  48%{transform:rotate(var(--new-r)) translateY(-54px) scale(1.14)}
+  100%{left:var(--new-x);top:var(--new-y);transform:rotate(var(--new-r)) translateY(0) scale(1)}
+}
+@keyframes coinFaceFlip{0%{transform:rotateY(0)}50%{transform:rotateY(540deg)}100%{transform:rotateY(1080deg)}}
+.shopCard{min-height:0;margin-bottom:7px}
+.coinShop{display:block;margin:0}
+.shopStats{gap:5px 8px}
+.prestigeBox{border-color:#6d382b}
+.smashBtn{width:100%;background:#6a2c25;border:1px solid #9c5146;color:#ffe6d8}
+.smashBtn:hover:not(:disabled){background:#84372e}
+.valueBar{height:7px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.35);margin:7px 0 4px;border:1px solid var(--line)}
+.valueBar i{display:block;height:100%;background:linear-gradient(90deg,#a85c43,var(--gold));transition:width .2s}
+.dockToy,#pScratch,#pSlot{margin-bottom:9px;max-height:300px;overflow:auto;border-radius:10px}
+.dockToy .toyHead{position:sticky;top:0;z-index:4}
+.dockToy .toyBody{padding:9px}
+#log{height:128px}
+.side .box{margin-bottom:9px}
+.side .box h3{padding:7px 10px}
+.side .box .inner{padding:8px 9px}
+@media(max-width:900px){body{overflow:auto}#wrap{height:auto;min-height:100vh}#main{grid-template-columns:1fr;display:flex;flex-direction:column}#rail{height:auto;overflow:visible;order:2}#tableStage{height:72vh;min-height:520px;order:1}.dockToy{max-height:none}}
+
+
+/* ---------- v0.5 light polish ---------- */
+#tableStage::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(circle at 20% 18%,rgba(255,255,255,.035),transparent 18%),
+    radial-gradient(circle at 76% 60%,rgba(255,255,255,.025),transparent 24%),
+    repeating-linear-gradient(110deg,rgba(255,255,255,.012) 0 1px,transparent 1px 7px);
+  mix-blend-mode:screen;opacity:.55
+}
+#tableStage::after{
+  content:"ONE MORE BET";position:absolute;left:50%;top:43%;transform:translate(-50%,-50%) rotate(-6deg);
+  font-weight:900;font-size:clamp(34px,7vw,96px);letter-spacing:.18em;color:rgba(255,255,255,.025);
+  pointer-events:none;z-index:0;white-space:nowrap
+}
+.swarmCoin::before{
+  content:"";position:absolute;inset:7%;border-radius:50%;border:2px dashed rgba(255,255,255,.20);
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.08);pointer-events:none
+}
+.swarmCoin::after{
+  content:"";position:absolute;inset:15%;border-radius:50%;border:1px solid rgba(0,0,0,.18);pointer-events:none
+}
+.swarmCoin .coinFace{position:relative;z-index:2;text-shadow:0 1px 0 rgba(255,255,255,.18)}
+.moneyFloat{
+  position:absolute;z-index:70;pointer-events:none;font-weight:900;font-size:16px;letter-spacing:.04em;
+  text-shadow:0 2px 5px rgba(0,0,0,.85);animation:moneyFloat .9s ease-out forwards
+}
+.moneyFloat.win{color:var(--win)} .moneyFloat.lose{color:var(--lose)}
+@keyframes moneyFloat{0%{transform:translate(-50%,0) scale(.82);opacity:0}18%{opacity:1}100%{transform:translate(-50%,-54px) scale(1.08);opacity:0}}
+#fxFlash{position:fixed;inset:0;z-index:85;pointer-events:none;opacity:0}
+#fxFlash.on{animation:jackFlash .52s ease}
+@keyframes jackFlash{0%{opacity:0;background:rgba(255,220,100,0)}20%{opacity:1;background:rgba(255,220,100,.18)}100%{opacity:0;background:rgba(255,220,100,0)}}
+.btn.ability{background:linear-gradient(180deg,#4c2b62,#2e193c);border-color:#74488e}
+.btn.ability.ready{box-shadow:0 0 0 1px rgba(202,139,255,.35),0 0 18px rgba(159,79,215,.24)}
+.btn.ability.hot{background:linear-gradient(180deg,#6b2c1b,#3d1710);border-color:#a44b2e;box-shadow:0 0 18px rgba(255,96,28,.25)}
+.cooldown{height:5px;background:rgba(0,0,0,.35);border-radius:6px;overflow:hidden;margin-top:5px}
+.cooldown i{display:block;height:100%;background:linear-gradient(90deg,#9255b2,#e7b45a);transition:width .16s}
+
+/* ---------- physical scratch table ---------- */
+#scratchField{
+  position:absolute;inset:0;z-index:12;pointer-events:none;overflow:hidden
+}
+.scratchToken{
+  position:absolute;width:132px;height:88px;border-radius:10px;pointer-events:auto;
+  border:2px solid rgba(255,255,255,.24);box-shadow:0 9px 20px rgba(0,0,0,.34);
+  transform:translate(-50%,-50%) rotate(var(--r));transition:filter .12s,transform .12s,opacity .2s;
+  overflow:hidden;text-align:left;padding:8px;color:white;font-weight:800
+}
+.scratchToken:hover{filter:brightness(1.1);z-index:60!important;transform:translate(-50%,-50%) rotate(var(--r)) scale(1.05)}
+.scratchToken.triple{background:linear-gradient(135deg,#e3557f,#b9245c 55%,#6f143b)}
+.scratchToken.sixer{background:linear-gradient(135deg,#3c7dd9,#2458a6 55%,#17386b)}
+.scratchToken.chaos{background:linear-gradient(135deg,#131313,#541516 55%,#180607);border-color:#b14b4b}
+.scratchToken.done{opacity:.78;filter:saturate(.7)}
+.scratchToken .ticketTop{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:10px;letter-spacing:.08em}
+.scratchToken .ticketName{font-size:13px;letter-spacing:.08em;margin-top:2px}
+.scratchToken .ticketCells{display:grid;gap:3px;margin-top:6px}
+.scratchToken.triple .ticketCells{grid-template-columns:repeat(3,1fr)}
+.scratchToken.sixer .ticketCells{grid-template-columns:repeat(3,1fr)}
+.scratchToken.chaos .ticketCells{grid-template-columns:repeat(5,1fr)}
+.ticketCell{
+  min-height:18px;border-radius:4px;background:linear-gradient(150deg,#a9a59a,#777268);border:1px solid rgba(0,0,0,.3);
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;position:relative;overflow:hidden
+}
+.ticketCell::after{
+  content:"";position:absolute;inset:0;background:
+  linear-gradient(120deg,rgba(255,255,255,.18),transparent 34%),
+  repeating-linear-gradient(45deg,rgba(255,255,255,.12) 0 1px,transparent 1px 4px);
+}
+.ticketCell.rev{background:#10231c;color:#f7f0df}
+.ticketCell.rev::after{display:none}
+.ticketCell.letter{background:#4e3c0a!important;color:#ffe58d!important}
+.ticketCell.bad{background:#4b1717!important;color:#ffb1aa!important}
+.ticketCell.good{background:#143d29!important;color:#b9ffd3!important}
+.scratchToken .ticketFoot{display:flex;justify-content:space-between;gap:5px;align-items:center;margin-top:5px;font-size:9px}
+.ticketResult{font-weight:900;font-size:10px}
+.ticketResult.win{color:#c5ffd8}.ticketResult.lose{color:#ffb0aa}
+.xrayBadge{font-size:8px;padding:2px 4px;border:1px solid #75d3ff;color:#9de2ff;border-radius:5px;background:rgba(8,41,56,.7)}
+.trashMini{font-size:8px;padding:2px 4px;border:1px solid rgba(255,255,255,.25);border-radius:4px;background:rgba(0,0,0,.26)}
+#scratchField.cardDense .scratchToken{width:112px;height:76px;padding:6px}
+#scratchField.cardVeryDense .scratchToken{width:92px;height:64px;padding:5px}
+#scratchField.cardVeryDense .ticketCell{min-height:12px;font-size:10px}
+.scratchShopRow{border:1px solid var(--line);background:rgba(0,0,0,.17);border-radius:8px;padding:8px;margin-bottom:7px}
+.scratchShopRow .title{font-weight:900;letter-spacing:.08em;font-size:11px}
+.scratchShopRow .sub{font-size:9.5px;color:var(--ink-dim);margin:2px 0 6px}
+.scratchShopRow.locked{opacity:.42}
+.wordRail{display:flex;gap:3px;justify-content:center;margin:6px 0 8px}
+.wordRail span{width:22px;height:25px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;border:1px solid #3c392c;background:#171711;color:#49463a}
+.wordRail span.got{background:linear-gradient(180deg,#e8c46a,#a98f45);color:#2b2005;border-color:#8a7127}
+.wordRail.complete span{animation:wordPop .5s ease}
+@keyframes wordPop{50%{transform:translateY(-4px) scale(1.08)}}
+
+/* ---------- skill tree branches ---------- */
+.skillBranches{display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:14px}
+.skillBranch{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.14);padding:10px}
+.skillBranch h3{margin:0 0 8px;font-size:11px;letter-spacing:.15em;color:var(--gold)}
+.skillBranch .nodes{grid-template-columns:1fr;gap:7px}
+.node.lockedPath{opacity:.48}
+.node.hiddenSkill{border-style:dashed;border-color:#6e5b87;background:rgba(81,47,101,.12)}
+.node .req{font-size:9px;color:#bda5cf;margin-top:3px}
+@keyframes bugWig{0%{transform:translate(0,0) rotate(-8deg)}100%{transform:translate(36px,18px) rotate(12deg)}}
+@media(max-width:760px){.skillBranches{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div id="wrap">
+
+  <header id="hud">
+    <div class="brand">ONE MORE BET<small>v0.5 · TABLE CHAOS</small></div>
+    <div class="stat"><label>CASH</label><b class="cash" id="hCash">$0</b></div>
+    <div class="stat"><label>PEAK</label><b id="hPeak">$0</b></div>
+    <div class="stat"><label>TABLE VALUE</label><b id="hValue">$0</b></div>
+    <div class="stat"><label>COINS</label><b id="hTable">1 / 50</b></div>
+    <div class="stat"><label>RUN</label><b id="hRun">1</b></div>
+    <div class="stat"><label>CHIPS</label><b id="hChips">0</b></div>
+    <div class="decor" id="hDecor"></div>
+    <div id="hudBtns">
+      <button class="btn" data-act="safe" id="bSafe">SAFE POCKET</button>
+      <button class="btn" data-act="tree">SKILL TREE</button>
+      <button class="btn" data-act="menu">MENU</button>
+    </div>
+  </header>
+
+  <div id="main">
+    <aside id="rail" class="side">
+      <div class="box prestigeBox"><h3>BREAK THE RUN</h3><div class="inner" id="prestigeRail"></div></div>
+      <div class="box"><h3>COIN SHOP</h3><div class="inner" id="coinShopRail"></div></div>
+      <div class="box"><h3>THIS RUN ONLY</h3><div class="inner" id="ups"></div></div>
+      <section class="toy dockToy" id="pScratch"></section>
+      <section class="toy dockToy" id="pSlot"></section>
+      <div class="box"><h3>TABLE LOG</h3><div class="inner" id="log"></div></div>
+    </aside>
+    <main id="tableStage">
+      <section id="pCoin"></section>
+      <section id="scratchField"></section>
+    </main>
+  </div>
+</div>
+
+<div id="ov"><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+<div id="fxFlash"></div>
+
+<script>
+/* ==============================================================
+   ONE MORE BET v0.5 · TABLE CHAOS
+   Single file prototype. No dependencies. Runs from file://
+   All balance numbers live in CONFIG below.
+   ============================================================== */
+
+/* --------------------------------------------------------------
+   1. CONFIG - every balance number in the game
+   -------------------------------------------------------------- */
+var CONFIG = {
+
+  saveKey: 'oneMoreBet_save',
+  saveVersion: 5,
+  autosaveMs: 5000,
+
+  run: {
+    // starting bankroll = startBankrollMult * current table stake
+    startBankrollMult: 20,
+    bankrollPerStartRank: 8
+  },
+
+  coin: {
+    // v0.4: fixed win/loss amounts. Early coin is forgiving; later coins swing harder.
+    maxCoins: 50,
+    denominations: [
+      { id:'copper', name:'COPPER', label:'$1',  winChance:0.50, win:5,   loss:3,  jpContrib:0.20, chanceGain:0.00025, unlockPeak:0,   buyBase:50,   buyGrowth:1.25, autoMs:2000 },
+      { id:'silver', name:'SILVER', label:'$5',  winChance:0.42, win:30,  loss:15, jpContrib:1.00, chanceGain:0.00070, unlockPeak:60,  buyBase:300,  buyGrowth:1.28, autoMs:3000 },
+      { id:'gold',   name:'GOLD',   label:'$25', winChance:0.34, win:160, loss:75, jpContrib:5.00, chanceGain:0.00180, unlockPeak:250, buyBase:1500, buyGrowth:1.32, autoMs:4000 }
+    ],
+    maxHeads: 0.72,
+    jackpot: { seed:25, baseChance:0.004, maxChance:0.06 },
+    autoBankrollMult: 5
+  },
+
+  // Run upgrades affect every physical coin and reset on bust.
+  upgrades: {
+    lucky:  { name:'LUCKY COIN',    desc:'Heads chance +1.5%',   ranks:2, costs:[35,140], step:0.015 },
+    payout: { name:'BETTER PAYOUT', desc:'Coin wins pay +10%', ranks:2, costs:[60,240], step:0.10  }
+  },
+
+  jcoin: {
+    baseCharges: 3,
+    seedPerStake: 10,
+    startChance: 0.65,
+    chanceDecay: 0.07,
+    minChance: 0.20,
+    growth: 1.9
+  },
+
+  scratch: {
+    unlockPeak: 120,
+    word: 'JACKPOT',
+    maxCardsBase: 10,
+    directLetterChance: 0.16,
+    kinds: {
+      triple: {
+        name:'LUCKY THREE', cost:25, unlockPeak:120, cells:3,
+        desc:'3 symbols. Two alike can pay; three alike pays big.',
+        symbols:[
+          {k:'cherry',g:'🍒',w:42,two:13,three:65},
+          {k:'clover',g:'🍀',w:35,two:23,three:97},
+          {k:'gem',g:'💎',w:23,two:32,three:155}
+        ]
+      },
+      sixer: {
+        name:'BLUE SIX', cost:75, unlockPeak:500, cells:6,
+        desc:'3–6 of a kind. Bigger matches scale violently.',
+        symbols:[
+          {k:'cherry',g:'🍒',w:34,m:0.75},
+          {k:'bell',g:'🔔',w:28,m:0.95},
+          {k:'clover',g:'🍀',w:22,m:1.12},
+          {k:'gem',g:'💎',w:16,m:1.35}
+        ],
+        matchPay:{3:55,4:170,5:640,6:3200}
+      },
+      chaos: {
+        name:'BLACK TEN', cost:200, unlockPeak:1500, cells:10,
+        desc:'Every reveal can add or remove cash. Quit early if it turns ugly.',
+        symbols:[
+          {k:'blank',g:'·',w:27,v:0},
+          {k:'green',g:'🍀',w:28,v:55},
+          {k:'gold',g:'✦',w:8,v:180},
+          {k:'red',g:'♦',w:30,v:-20},
+          {k:'black',g:'◆',w:7,v:-95}
+        ]
+      }
+    },
+    autoMs: 2400
+  },
+
+  slot: {
+    cost: 50,             // x stake
+    potSeed: 600,         // x stake
+    potContrib: 7,        // x stake, per spin
+    twoCherry: 66,        // x stake
+    spinMs: 700,
+    autoMs: 2600,
+    autoBankrollMult: 10,
+    symbols: [
+      { k:'cherry', g:'🍒', w:30, p:190  },
+      { k:'bell',   g:'🔔', w:24, p:330  },
+      { k:'star',   g:'⭐',       w:19, p:770  },
+      { k:'gem',    g:'💎', w:14, p:2300 },
+      { k:'seven',  g:'7️⃣', w:13, p:0   }  // 777 pays the pot
+    ]
+  },
+
+  prestige: {
+    chipCap: 14,
+    thresholds: [400,1000,1900,3200,5000,7500,11000,15500,21500,29000,38000,49000,62000,78000],
+    investedWeight: 0.20,
+    perWord: 0,
+    perSlotJackpot: 1
+  },
+
+  tree: {
+    hands:     { branch:'HAND', name:'DEALER HANDS', desc:'Hand capacity: 5 → 15 → 25 → 35 → 50 mixed coins', ranks:5, costs:[1,2,4,6,9] },
+    power:     { branch:'HAND', name:'LOADED TOSS', desc:'Charged toss: up to 5 coins, 90% win chance and ×5 win payout', ranks:1, costs:[4], req:{hands:1} },
+    caffeine:  { branch:'HAND', name:'CAFFEINE RUSH', desc:'5 seconds of frantic 90% coin flips; later also boosts scratch automation', ranks:1, costs:[5], req:{power:1}, hidden:true },
+
+    clover:    { branch:'LUCK', name:'LUCKY CLOVER', desc:'Global good-outcome weight. Four leaves: +1 / +3 / +5 / +11%', ranks:4, costs:[1,2,4,8] },
+    jluck:     { branch:'LUCK', name:'JACKPOT PRESSURE', desc:'Coin jackpot base chance +0.2%', ranks:2, costs:[2,4], req:{clover:1} },
+    golden:    { branch:'LUCK', name:'GOLDEN TOUCH', desc:'+2 Jackpot Coin flips and a kinder ladder', ranks:2, costs:[3,5], req:{jluck:1} },
+    safe:      { branch:'LUCK', name:'SAFE POCKET', desc:'Protect part of your cash from a bust', ranks:3, costs:[2,3,5], req:{clover:1} },
+
+    flipper:   { branch:'AUTO', name:'COIN BUG', desc:'A table bug starts flipping old coins once Scratch opens', ranks:1, costs:[3], req:{hands:1} },
+    bugspeed:  { branch:'AUTO', name:'RESTLESS BUG', desc:'Coin automation gets faster', ranks:2, costs:[3,5], req:{flipper:1} },
+    tiny:      { branch:'AUTO', name:'TINY SCRATCHER', desc:'Automatically scratches cards after Slot unlocks', ranks:1, costs:[4], req:{scratchhand:1} },
+    scratchspeed:{ branch:'AUTO', name:'SCRATCH FEVER', desc:'Tiny Scratcher works faster; Caffeine makes it frantic', ranks:2, costs:[3,6], req:{tiny:1} },
+
+    cardcap:   { branch:'SCRATCH', name:'CARD TABLE', desc:'Maximum cards on felt: 25 → 50 → 100', ranks:3, costs:[1,3,6] },
+    scratchhand:{ branch:'SCRATCH', name:'QUICK SCRATCH', desc:'Scratch a stack: 5 → 10 → ALL', ranks:3, costs:[2,4,7], req:{cardcap:1} },
+    trash:     { branch:'SCRATCH', name:'TRASH CAN', desc:'Throw away a partially revealed ticket before it gets worse', ranks:1, costs:[3], req:{cardcap:1} },
+    xray:      { branch:'SCRATCH', name:'X-RAY LIGHT', desc:'See the full-ticket outcome on BLUE SIX and BLACK TEN before scratching', ranks:1, costs:[10], req:{trash:1,clover:2}, hidden:true },
+
+    stack:     { branch:'META', name:'STARTING STACK', desc:'Start each run with a bigger bankroll', ranks:3, costs:[1,2,4] },
+    bigcoin:   { branch:'META', name:'SILVER START', desc:'Silver Coin shop starts unlocked each run', ranks:1, costs:[4], req:{stack:1} },
+    autospin:  { branch:'META', name:'AUTO SPIN', desc:'Reserved for when a newer toy exists', ranks:1, costs:[8], future:true }
+  },
+  treeEffects: {
+    stackPerRank: 8,
+    jluckPerRank: 0.002,
+    goldenCharges: 2,
+    goldenLadderBonus: 0.03,
+    safeProtect: [0.20,0.30,0.35],
+    safeTokens:  [1,1,2],
+    handCaps: [1,5,15,25,35,50],
+    cloverTotal: [0,0.01,0.04,0.09,0.20],
+    cardCaps: [10,25,50,100],
+    scratchCaps: [1,5,10,100],
+    powerCooldownMs: 30000,
+    caffeineCooldownMs: 60000,
+    caffeineDurationMs: 5000,
+    caffeineTickMs: 360
+  },
+
+  achievements: [
+    { id:'firstwin', name:'FIRST WIN',           desc:'Win a coin flip',                   cosmetic:null },
+    { id:'sadcoin',  name:'SAD COIN',            desc:'Lose 100 coin flips',               cosmetic:'Sad Coin' },
+    { id:'cloth',    name:'GOLDEN TABLECLOTH',   desc:'Hit your first jackpot',            cosmetic:'Golden Tablecloth' },
+    { id:'neon',     name:'NEON SIGN',           desc:'Complete J-A-C-K-P-O-T',            cosmetic:'Neon Sign' },
+    { id:'cat',      name:'LUCKY CAT',           desc:'Bust 10 times',                     cosmetic:'Lucky Cat' },
+    { id:'pig',      name:'GOLD PIG',            desc:'Reach $10,000 in one run',          cosmetic:'Gold Pig' },
+    { id:'stop',     name:'KNOWS WHEN TO STOP',  desc:'Bank a Jackpot Coin at step 3+',    cosmetic:'Silver Chip' }
+  ],
+  cosmeticIcons: {
+    'Sad Coin':'🪙','Golden Tablecloth':'🟨','Neon Sign':'💡',
+    'Lucky Cat':'🐱','Gold Pig':'🐷','Silver Chip':'⚪'
+  },
+
+  logLines: 90
+};
+
+/* --------------------------------------------------------------
+   2. RNG - seeded so playtests can be reproduced
+   -------------------------------------------------------------- */
+var RNG = (function(){
+  var s = 0;
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var fn = mulberry32(Math.floor(Math.random()*1e9));
+  return {
+    seed:function(n){ s = n>>>0; fn = mulberry32(s); },
+    get:function(){ return s; },
+    next:function(){ return fn(); },
+    chance:function(p){ return fn() < p; },
+    int:function(n){ return Math.floor(fn()*n); }
+  };
+})();
+
+/* --------------------------------------------------------------
+   3. State
+   -------------------------------------------------------------- */
+var S = null;
+
+function freshMeta(){
+  return {
+    chips: 0,
+    nodes: {},
+    runCount: 1,
+    bestPeak: 0,
+    achievements: {},
+    cosmeticsUnlocked: {},
+    carryCash: 0,
+    seed: Math.floor(Math.random()*1e9),
+    firstPrestigeUnlocked:false,
+    stats: { flips:0, lostFlips:0, busts:0, coinJackpots:0, slotJackpots:0, words:0, cards:0, spins:0 }
+  };
+}
+
+function rank(id){ return (S.meta.nodes[id]||0); }
+
+function makeCoinObject(id, denom){
+  var p=randomTablePosition();
+  return { id:id, denom:denom, face:'?', last:null, busy:false, x:p.x, y:p.y, r:p.r, oldX:p.x, oldY:p.y, oldR:p.r };
+}
+function randomTablePosition(){
+  // Math.random is intentionally visual-only; it never changes seeded gameplay RNG.
+  return { x:4+Math.random()*88, y:8+Math.random()*68, r:-24+Math.random()*48 };
+}
+function moveCoinVisual(coin){
+  coin.oldX=coin.x; coin.oldY=coin.y; coin.oldR=coin.r;
+  var p=randomTablePosition(); coin.x=p.x; coin.y=p.y; coin.r=p.r;
+}
+function freshRun(){
+  var mult = CONFIG.run.startBankrollMult + CONFIG.run.bankrollPerStartRank * rank('stack');
+  var cash = mult + (S.meta.carryCash || 0);
+  S.meta.carryCash = 0;
+  return {
+    cash: cash,
+    peak: cash,
+    tier: 0,
+    up: { lucky:0, payout:0 },
+    coin: {
+      pot: CONFIG.coin.jackpot.seed,
+      chance: coinBaseChance(),
+      shopUnlocked: { copper:true, silver:rank('bigcoin')>0, gold:false },
+      coins: [makeCoinObject(1,'copper')],
+      nextCoinId: 2,
+      cursor: { copper:0, silver:0, gold:0 },
+      handCursor: 0
+    },
+    jcoin: { charges: CONFIG.jcoin.baseCharges + CONFIG.treeEffects.goldenCharges * rank('golden'),
+             active:false, pot:0, step:0 },
+    scratch: { unlocked:false, letters:{}, cards:[], nextCardId:1, cursor:0 },
+    slot: { unlocked:false, pot: CONFIG.slot.potSeed, reels:[0,1,2], busy:false, last:null },
+    safe: { tokens: rank('safe')>0 ? CONFIG.treeEffects.safeTokens[rank('safe')-1] : 0, banked:0 },
+    abilities:{ powerReadyAt:0, caffeineReadyAt:0, caffeineUntil:0 },
+    words: 0, slotJackpots: 0, coinJackpots: 0,
+    invested: 0, manualSmashes: 0,
+    log: [],
+    telemetry: {
+      flips:0, coinWins:0, coinLosses:0,
+      coinByDenom:{ copper:0, silver:0, gold:0 },
+      coinsBought:0, autoCoinFlips:0,
+      cardsBought:0, scratchWins:0,
+      spins:0, slotWins:0,
+      upgradesBought:0, safePocketUses:0,
+      scratchUnlockedAt:null, slotUnlockedAt:null,
+      bustAt:null, chipsEarned:null, prestigeType:null
+    },
+    busted: false, endReason:null,
+    started: Date.now()
+  };
+}
+
+function coinBaseChance(){
+  return CONFIG.coin.jackpot.baseChance + CONFIG.treeEffects.jluckPerRank * rank('jluck');
+}
+
+/* --------------------------------------------------------------
+   4. Derived values
+   -------------------------------------------------------------- */
+function stake(){ return 1; }
+function coinCfg(id){
+  for (var i=0;i<CONFIG.coin.denominations.length;i++)
+    if (CONFIG.coin.denominations[i].id === id) return CONFIG.coin.denominations[i];
+  return CONFIG.coin.denominations[0];
+}
+function luckBonus(){
+  return CONFIG.treeEffects.cloverTotal[Math.min(rank('clover'),CONFIG.treeEffects.cloverTotal.length-1)] || 0;
+}
+function headsChance(id){
+  var c = coinCfg(id);
+  var base = c.winChance + CONFIG.upgrades.lucky.step * S.run.up.lucky;
+  // Relative good-outcome weighting rather than flat percentage points.
+  var l = luckBonus();
+  var weighted = (base*(1+l)) / (base*(1+l) + (1-base));
+  return Math.min(CONFIG.coin.maxHeads, weighted);
+}
+function winAmount(id){ var c=coinCfg(id); return c.win * (1 + CONFIG.upgrades.payout.step * S.run.up.payout); }
+function lossAmount(id){ return coinCfg(id).loss; }
+function coinNetEdge(id){ var c=coinCfg(id), p=headsChance(id); return p*winAmount(id) - (1-p)*lossAmount(id); }
+function coinCount(id){
+  var n=0; for (var i=0;i<S.run.coin.coins.length;i++) if (S.run.coin.coins[i].denom===id) n++; return n;
+}
+function totalCoinCount(){ return S.run.coin.coins.length; }
+function ownedCoinIds(){
+  var out=[]; for (var i=0;i<CONFIG.coin.denominations.length;i++) if (coinCount(CONFIG.coin.denominations[i].id)>0) out.push(CONFIG.coin.denominations[i].id); return out;
+}
+function unlockedCoinIds(){
+  var out=[]; for (var i=0;i<CONFIG.coin.denominations.length;i++){ var id=CONFIG.coin.denominations[i].id; if (S.run.coin.shopUnlocked[id]) out.push(id); } return out;
+}
+function highestAffordableCoin(){
+  var ids=ownedCoinIds(); for (var i=ids.length-1;i>=0;i--) if (S.run.cash>=lossAmount(ids[i])) return ids[i]; return 'copper';
+}
+function manualHandCap(){ return CONFIG.treeEffects.handCaps[Math.min(rank('hands'),CONFIG.treeEffects.handCaps.length-1)]; }
+function manualHandLabel(){ return String(manualHandCap()); }
+function coinPurchaseCost(id){
+  var c=coinCfg(id), owned=coinCount(id), included=(id==='copper'?1:0);
+  var exp=Math.max(0,owned-included);
+  return Math.round(c.buyBase*Math.pow(c.buyGrowth,exp));
+}
+function denomHandCount(id){ return Math.min(coinCount(id),manualHandCap()); }
+function denomHandCost(id){ var arr=coinsOfDenom(id), sum=0; for(var i=0;i<Math.min(arr.length,manualHandCap());i++) sum+=lossAmount(id); return sum; }
+function tableValue(){ return Math.max(0,S.run.cash) + (S.run.invested||0); }
+function prestigeScore(){ return Math.max(S.run.peak||0,S.run.cash||0) + (S.run.invested||0)*CONFIG.prestige.investedWeight; }
+function basePrestigeChips(){
+  var score=prestigeScore(), n=0;
+  for(var i=0;i<CONFIG.prestige.thresholds.length;i++) if(score>=CONFIG.prestige.thresholds[i]) n=i+1; else break;
+  n += S.run.words*CONFIG.prestige.perWord + S.run.slotJackpots*CONFIG.prestige.perSlotJackpot;
+  return Math.min(CONFIG.prestige.chipCap,n);
+}
+function nextPrestigeThreshold(){
+  var n=basePrestigeChips();
+  return n>=CONFIG.prestige.thresholds.length?null:CONFIG.prestige.thresholds[n];
+}
+function coinById(cid){
+  cid=parseInt(cid,10); for (var i=0;i<S.run.coin.coins.length;i++) if (S.run.coin.coins[i].id===cid) return S.run.coin.coins[i]; return null;
+}
+function scratchCfg(kind){ return CONFIG.scratch.kinds[kind]; }
+function cardCost(kind){ return scratchCfg(kind).cost * stake(); }
+function cardCap(){ return CONFIG.treeEffects.cardCaps[Math.min(rank('cardcap'),CONFIG.treeEffects.cardCaps.length-1)]; }
+function scratchBatchCap(){ return CONFIG.treeEffects.scratchCaps[Math.min(rank('scratchhand'),CONFIG.treeEffects.scratchCaps.length-1)]; }
+function slotCost(){ return CONFIG.slot.cost * stake(); }
+function cheapestAction(){
+  var c = lossAmount('copper');
+  if (S.run.scratch.unlocked) c = Math.min(c, cardCost('triple'));
+  return c;
+}
+function upgradeCost(id){
+  var u = CONFIG.upgrades[id];
+  return u.costs[S.run.up[id]] * stake();
+}
+
+/* --------------------------------------------------------------
+   5. Money, log, toast
+   -------------------------------------------------------------- */
+function money(n){
+  var neg = n < 0; n = Math.abs(n);
+  var s = n >= 100 ? Math.round(n).toLocaleString('en-US')
+                   : n.toLocaleString('en-US',{maximumFractionDigits:2});
+  return (neg?'-$':'$') + s;
+}
+function addCash(n){
+  S.run.cash += n;
+  if (S.run.cash > S.run.peak) S.run.peak = S.run.cash;
+  if (S.run.peak > S.meta.bestPeak) S.meta.bestPeak = S.run.peak;
+  if (S.run.peak >= 10000) unlockAch('pig');
+}
+function log(txt, cls){
+  S.run.log.unshift({ t:txt, c:cls||'' });
+  if (S.run.log.length > CONFIG.logLines) S.run.log.pop();
+  renderLog();
+}
+function toast(txt){
+  var d = document.createElement('div');
+  d.className = 'tst'; d.textContent = txt;
+  document.getElementById('toast').appendChild(d);
+  setTimeout(function(){ d.remove(); }, 3200);
+}
+
+/* --------------------------------------------------------------
+   6. Achievements and cosmetics
+   -------------------------------------------------------------- */
+function unlockAch(id){
+  if (S.meta.achievements[id]) return;
+  var a = null;
+  for (var i=0;i<CONFIG.achievements.length;i++) if (CONFIG.achievements[i].id===id) a = CONFIG.achievements[i];
+  if (!a) return;
+  S.meta.achievements[id] = true;
+  if (a.cosmetic) S.meta.cosmeticsUnlocked[a.cosmetic] = true;
+  toast('ACHIEVEMENT: ' + a.name + (a.cosmetic ? '  →  ' + a.cosmetic : ''));
+  applyCosmetics();
+}
+function applyCosmetics(){
+  document.body.classList.toggle('cloth-gold', !!S.meta.cosmeticsUnlocked['Golden Tablecloth']);
+  var out = '';
+  for (var k in S.meta.cosmeticsUnlocked) if (CONFIG.cosmeticIcons[k]) out += CONFIG.cosmeticIcons[k];
+  document.getElementById('hDecor').textContent = out;
+}
+
+/* --------------------------------------------------------------
+   7. Weighted pick helper
+   -------------------------------------------------------------- */
+function weightedIndex(list){
+  var tot = 0, i;
+  for (i=0;i<list.length;i++) tot += list[i].w;
+  var r = RNG.next() * tot;
+  for (i=0;i<list.length;i++){ r -= list[i].w; if (r <= 0) return i; }
+  return list.length-1;
+}
+
+/* --------------------------------------------------------------
+   8. COIN SWARM · v0.4 fixed table
+   -------------------------------------------------------------- */
+function buyCoin(id){
+  if (S.run.busted || totalCoinCount()>=CONFIG.coin.maxCoins || !S.run.coin.shopUnlocked[id]) return;
+  var cost=coinPurchaseCost(id);
+  if (S.run.cash<cost) return;
+  addCash(-cost);
+  S.run.invested=(S.run.invested||0)+cost;
+  var coin=makeCoinObject(S.run.coin.nextCoinId++,id);
+  S.run.coin.coins.push(coin);
+  if (S.run.telemetry) S.run.telemetry.coinsBought++;
+  log('BOUGHT '+coinCfg(id).name+' COIN  ·  '+totalCoinCount()+'/'+CONFIG.coin.maxCoins+' on table','lg-win');
+  checkUnlocks(); checkBust(); renderAll();
+}
+function setCoinsBusy(coins){
+  var ids=[];
+  for (var i=0;i<coins.length;i++){ coins[i].busy=true; ids.push(coins[i].id); }
+  setTimeout(function(){
+    if (!S || !S.run || !S.run.coin || !S.run.coin.coins) return;
+    for (var i=0;i<S.run.coin.coins.length;i++) if (ids.indexOf(S.run.coin.coins[i].id)>=0) S.run.coin.coins[i].busy=false;
+    renderCoin();
+  },570);
+}
+function flashJackpot(){
+  var f=document.getElementById('fxFlash'); if(!f)return;
+  f.classList.remove('on'); void f.offsetWidth; f.classList.add('on');
+}
+function spawnMoneyFloat(coin,amt){
+  var d=document.createElement('div');
+  d.className='moneyFloat '+(amt>=0?'win':'lose');
+  d.textContent=(amt>=0?'+':'')+money(amt);
+  d.style.left=coin.x+'%'; d.style.top=coin.y+'%';
+  document.getElementById('tableStage').appendChild(d);
+  setTimeout(function(){d.remove();},950);
+}
+function oneFlipCoin(coin,opts){
+  opts=opts||{};
+  var cfg=coinCfg(coin.denom);
+  S.meta.stats.flips++;
+  if (S.run.telemetry){
+    S.run.telemetry.flips++;
+    if (!S.run.telemetry.coinByDenom) S.run.telemetry.coinByDenom={copper:0,silver:0,gold:0};
+    S.run.telemetry.coinByDenom[coin.denom]=(S.run.telemetry.coinByDenom[coin.denom]||0)+1;
+  }
+  S.run.coin.pot += cfg.jpContrib;
+  var chance=opts.forcedChance===undefined?headsChance(coin.denom):opts.forcedChance;
+  var heads=RNG.chance(chance), delta=0;
+  if (heads){
+    delta=winAmount(coin.denom)*(opts.winMult||1);
+    addCash(delta);
+    coin.face='H'; coin.last='win';
+    if (S.run.telemetry) S.run.telemetry.coinWins++;
+    unlockAch('firstwin');
+  }else{
+    delta=-lossAmount(coin.denom);
+    addCash(delta);
+    S.meta.stats.lostFlips++;
+    if (S.run.telemetry) S.run.telemetry.coinLosses++;
+    S.run.coin.chance=Math.min(CONFIG.coin.jackpot.maxChance,S.run.coin.chance+cfg.chanceGain);
+    coin.face='T'; coin.last='lose';
+    if (S.meta.stats.lostFlips>=100) unlockAch('sadcoin');
+  }
+  moveCoinVisual(coin);
+  spawnMoneyFloat(coin,delta);
+  var jp=0;
+  if (RNG.chance(S.run.coin.chance)){
+    jp=S.run.coin.pot; addCash(jp);
+    S.run.coin.pot=CONFIG.coin.jackpot.seed; S.run.coin.chance=coinBaseChance();
+    S.run.coinJackpots++; S.meta.stats.coinJackpots++;
+    log('COIN JACKPOT  '+money(jp),'lg-big'); toast('COIN JACKPOT '+money(jp)); unlockAch('cloth'); flashJackpot();
+  }
+  return {heads:heads,jackpot:jp,delta:delta};
+}
+function worstLoss(coins){ var sum=0; for(var i=0;i<coins.length;i++) sum+=lossAmount(coins[i].denom); return sum; }
+function affordablePrefix(coins){
+  var out=[],budget=S.run.cash,used=0;
+  for(var i=0;i<coins.length;i++){ var c=lossAmount(coins[i].denom); if(used+c>budget) break; used+=c; out.push(coins[i]); }
+  return out;
+}
+function flipCoinBatch(coins,label,isAuto,opts){
+  if (S.run.busted || !coins.length) return;
+  coins=affordablePrefix(coins);
+  if(!coins.length) return;
+  var before=S.run.cash, h=0,t=0;
+  for (var i=0;i<coins.length;i++){ var r=oneFlipCoin(coins[i],opts); if(r.heads)h++; else t++; }
+  if (isAuto && S.run.telemetry) S.run.telemetry.autoCoinFlips += coins.length;
+  var net=S.run.cash-before;
+  log((isAuto?'AUTO ':'')+label+' ×'+coins.length+'  ·  '+h+'H '+t+'T  ·  '+(net>=0?'+':'')+money(net), net>=0?'lg-win':'lg-lose');
+  setCoinsBusy(coins);
+  checkUnlocks(); checkBust(); renderAll();
+}
+function flipOneCoin(cid){
+  var c=coinById(cid); if(!c || S.run.cash<lossAmount(c.denom)) return;
+  flipCoinBatch([c],coinCfg(c.denom).name,false);
+}
+function coinsOfDenom(id){
+  var out=[]; for(var i=0;i<S.run.coin.coins.length;i++) if(S.run.coin.coins[i].denom===id) out.push(S.run.coin.coins[i]); return out;
+}
+function handCandidates(){
+  var all=S.run.coin.coins.slice(), n=Math.min(all.length,manualHandCap());
+  if(!all.length) return [];
+  var start=(S.run.coin.handCursor||0)%all.length, out=[];
+  for(var i=0;i<n;i++) out.push(all[(start+i)%all.length]);
+  return affordablePrefix(out);
+}
+function flipHand(){
+  var batch=handCandidates(); if(!batch.length) return;
+  S.run.coin.handCursor=((S.run.coin.handCursor||0)+batch.length)%Math.max(1,S.run.coin.coins.length);
+  flipCoinBatch(batch,'HAND',false);
+}
+function powerFlip(){
+  if(rank('power')<1 || S.run.busted) return;
+  var now=Date.now();
+  if(now < (S.run.abilities.powerReadyAt||0)) return;
+  var batch=handCandidates().slice(0,5); if(!batch.length)return;
+  S.run.abilities.powerReadyAt=now+CONFIG.treeEffects.powerCooldownMs;
+  S.run.coin.handCursor=((S.run.coin.handCursor||0)+batch.length)%Math.max(1,S.run.coin.coins.length);
+  flipCoinBatch(batch,'LOADED TOSS',false,{forcedChance:0.90,winMult:5});
+  toast('LOADED TOSS · 90% · ×5');
+}
+function caffeineRush(){
+  if(rank('caffeine')<1 || S.run.busted)return;
+  var now=Date.now();
+  if(now < (S.run.abilities.caffeineReadyAt||0)) return;
+  S.run.abilities.caffeineUntil=now+CONFIG.treeEffects.caffeineDurationMs;
+  S.run.abilities.caffeineReadyAt=now+CONFIG.treeEffects.caffeineCooldownMs;
+  toast('CAFFEINE RUSH · 5 SECONDS');
+  renderAll();
+}
+function flipDenom(id,isAuto){
+  var owned=coinsOfDenom(id); if(!owned.length) return;
+  if(isAuto){ flipCoinBatch(owned,coinCfg(id).name,true); return; }
+  // Kept for old saves / debug. Main v0.4 control is the mixed hand button.
+  flipCoinBatch(owned.slice(0,Math.min(owned.length,manualHandCap())),coinCfg(id).name,false);
+}
+function autoFlipDenom(id){
+  if(!S || S.run.busted || !coinAutoReady()) return;
+  var owned=coinsOfDenom(id); if(!owned.length) return;
+  var reserve=worstLoss(owned)*CONFIG.coin.autoBankrollMult;
+  if(S.run.cash<reserve) return;
+  flipCoinBatch(owned,coinCfg(id).name,true);
+}
+
+function flipAllOwned(){ flipHand(); }
+
+/* --------------------------------------------------------------
+   9. JACKPOT COIN - press your luck ladder
+   -------------------------------------------------------------- */
+function jcoinChance(){
+  var c = CONFIG.jcoin.startChance
+        + CONFIG.treeEffects.goldenLadderBonus * rank('golden')
+        - CONFIG.jcoin.chanceDecay * S.run.jcoin.step;
+  return Math.max(CONFIG.jcoin.minChance, c);
+}
+function jcoinStart(){
+  if (S.run.jcoin.active || S.run.jcoin.charges <= 0) return;
+  S.run.jcoin.charges--;
+  S.run.jcoin.active = true;
+  S.run.jcoin.step = 0;
+  S.run.jcoin.pot = CONFIG.jcoin.seedPerStake * stake();
+  log('JACKPOT COIN opened at ' + money(S.run.jcoin.pot));
+  renderAll();
+}
+function jcoinPush(){
+  if (!S.run.jcoin.active) return;
+  var p = jcoinChance();
+  if (RNG.chance(p)){
+    S.run.jcoin.pot *= CONFIG.jcoin.growth;
+    S.run.jcoin.step++;
+    log('JACKPOT COIN survives  ' + money(S.run.jcoin.pot), 'lg-win');
+  } else {
+    log('JACKPOT COIN dies  ' + money(-S.run.jcoin.pot), 'lg-lose');
+    S.run.jcoin.active = false; S.run.jcoin.pot = 0; S.run.jcoin.step = 0;
+  }
+  checkBust(); renderAll();
+}
+function jcoinTake(){
+  // The first Jackpot Coin flip is mandatory. The starting pot is only a stake
+  // preview; it cannot be banked until the player survives at least one flip.
+  if (!S.run.jcoin.active || S.run.jcoin.step < 1) return;
+  var pot = S.run.jcoin.pot, st = S.run.jcoin.step;
+  addCash(pot);
+  S.run.jcoin.active = false; S.run.jcoin.pot = 0; S.run.jcoin.step = 0;
+  log('JACKPOT COIN banked  ' + money(pot), 'lg-big');
+  if (st >= 3) unlockAch('stop');
+  renderAll();
+}
+
+/* --------------------------------------------------------------
+   10. SCRATCH TABLE
+   -------------------------------------------------------------- */
+function missingLetters(){
+  var out=[],w=CONFIG.scratch.word;
+  for(var i=0;i<w.length;i++) if(!S.run.scratch.letters[w[i]]) out.push(w[i]);
+  return out;
+}
+function scratchCardPosition(){
+  return {x:10+Math.random()*78,y:15+Math.random()*46,r:-11+Math.random()*22};
+}
+function weightedFrom(list){
+  var tot=0,i; for(i=0;i<list.length;i++)tot+=list[i].w;
+  var r=RNG.next()*tot;
+  for(i=0;i<list.length;i++){r-=list[i].w;if(r<=0)return i;}
+  return list.length-1;
+}
+function weightedScratchIndex(list){
+  var l=luckBonus(),weights=[],tot=0,i;
+  for(i=0;i<list.length;i++){
+    var s=list[i],good=(s.v>0)||(s.m!==undefined&&s.m>=1)||(s.three!==undefined&&s.three>=90);
+    var w=s.w*(good?(1+l):1);weights.push(w);tot+=w;
+  }
+  var r=RNG.next()*tot;
+  for(i=0;i<weights.length;i++){r-=weights[i];if(r<=0)return i;}
+  return weights.length-1;
+}
+function buildScratchCard(kind){
+  var cfg=scratchCfg(kind), cells=[], i, p=scratchCardPosition(), miss=missingLetters(), letterAt=-1;
+  if(miss.length && RNG.chance(Math.min(.45,CONFIG.scratch.directLetterChance*(1+luckBonus())))) letterAt=RNG.int(cfg.cells);
+  for(i=0;i<cfg.cells;i++){
+    if(i===letterAt){
+      cells.push({letter:miss[RNG.int(miss.length)],rev:false});
+    }else{
+      var idx=weightedScratchIndex(cfg.symbols), s=cfg.symbols[idx];
+      cells.push({s:idx,rev:false,v:(kind==='chaos'?s.v:0)});
+    }
+  }
+  return {id:S.run.scratch.nextCardId++,kind:kind,cells:cells,done:false,trashed:false,prize:0,x:p.x,y:p.y,r:p.r};
+}
+function scratchCardById(id){
+  id=parseInt(id,10);
+  for(var i=0;i<S.run.scratch.cards.length;i++) if(S.run.scratch.cards[i].id===id)return S.run.scratch.cards[i];
+  return null;
+}
+function unlockedScratchKind(kind){ return S.run.peak>=scratchCfg(kind).unlockPeak; }
+function buyScratch(kind,qty){
+  qty=Math.max(1,parseInt(qty||1,10));
+  if(S.run.busted || !S.run.scratch.unlocked || !unlockedScratchKind(kind))return;
+  var free=cardCap()-S.run.scratch.cards.length;
+  qty=Math.min(qty,free);
+  if(qty<=0)return;
+  var cost=cardCost(kind), can=Math.floor(S.run.cash/cost);
+  qty=Math.min(qty,can);
+  if(qty<=0)return;
+  var total=cost*qty;
+  addCash(-total); S.run.invested=(S.run.invested||0)+total;
+  for(var i=0;i<qty;i++) S.run.scratch.cards.push(buildScratchCard(kind));
+  S.meta.stats.cards+=qty;
+  if(S.run.telemetry)S.run.telemetry.cardsBought+=qty;
+  log('BOUGHT '+qty+'× '+scratchCfg(kind).name+' · '+money(total));
+  checkBust(); renderAll();
+}
+function xrayText(card){
+  if(rank('xray')<1 || card.kind==='triple')return '';
+  if(card.kind==='chaos'){
+    var sum=0; for(var i=0;i<card.cells.length;i++) if(!card.cells[i].letter) sum+=(card.cells[i].v||0);
+    return (sum>=0?'+':'')+money(sum);
+  }
+  var s=settlementPreview(card);
+  return (s>=0?'+':'')+money(s);
+}
+function settlementPreview(card){
+  var cfg=scratchCfg(card.kind), count={}, i;
+  if(card.kind==='chaos'){
+    var sum=0;for(i=0;i<card.cells.length;i++)if(!card.cells[i].letter)sum+=card.cells[i].v||0;return sum;
+  }
+  for(i=0;i<card.cells.length;i++){var c=card.cells[i];if(c.letter)continue;count[c.s]=(count[c.s]||0)+1;}
+  var bestN=0,bestS=null;
+  for(var k in count)if(count[k]>bestN){bestN=count[k];bestS=parseInt(k,10);}
+  if(card.kind==='triple'){
+    if(bestN<2)return 0;
+    var sym=cfg.symbols[bestS]; return bestN>=3?sym.three:sym.two;
+  }
+  if(bestN<3)return 0;
+  return (cfg.matchPay[Math.min(6,bestN)]||0)*cfg.symbols[bestS].m;
+}
+function revealScratchCell(card,idx){
+  if(!card||card.done||card.trashed)return;
+  var c=card.cells[idx]; if(!c||c.rev)return;
+  c.rev=true;
+  if(c.letter){
+    S.run.scratch.letters[c.letter]=true;
+    log('SCRATCH LETTER '+c.letter,'lg-win');
+    if(missingLetters().length===0)completeWord();
+  }else if(card.kind==='chaos'){
+    if(c.v){ addCash(c.v); log('BLACK TEN '+(c.v>=0?'+':'')+money(c.v),c.v>=0?'lg-win':'lg-lose'); }
+  }
+  if(card.cells.every(function(x){return x.rev;})) settleScratchCard(card);
+}
+function scratchCardClick(id){
+  var card=scratchCardById(id); if(!card||card.done||card.trashed)return;
+  for(var i=0;i<card.cells.length;i++) if(!card.cells[i].rev){revealScratchCell(card,i);break;}
+  checkBust(); renderAll();
+}
+function settleScratchCard(card){
+  if(card.done)return;
+  card.done=true;
+  var prize=0;
+  if(card.kind!=='chaos') prize=settlementPreview(card);
+  card.prize=prize;
+  if(prize>0){
+    addCash(prize);
+    if(S.run.telemetry)S.run.telemetry.scratchWins++;
+    log(card.kind.toUpperCase()+' SCRATCH +'+money(prize),'lg-win');
+  }else if(card.kind!=='chaos') log(card.kind.toUpperCase()+' SCRATCH · NOTHING','lg-lose');
+}
+function scratchWholeCard(card){
+  if(!card||card.done||card.trashed)return;
+  for(var i=0;i<card.cells.length;i++) if(!card.cells[i].rev) revealScratchCell(card,i);
+}
+function scratchStack(){
+  var open=S.run.scratch.cards.filter(function(c){return !c.done&&!c.trashed;});
+  if(!open.length)return;
+  var n=Math.min(open.length,scratchBatchCap());
+  for(var i=0;i<n;i++)scratchWholeCard(open[i]);
+  checkBust(); renderAll();
+}
+function trashScratch(id){
+  if(rank('trash')<1)return;
+  var c=scratchCardById(id); if(!c||c.done)return;
+  c.trashed=true;c.done=true;
+  log('TICKET THROWN AWAY','lg-lose'); renderAll();checkBust();
+}
+function clearDoneCards(){
+  S.run.scratch.cards=S.run.scratch.cards.filter(function(c){return !c.done;});
+  renderAll();
+}
+function completeWord(){
+  S.run.words++;S.meta.stats.words++;
+  S.run.scratch.letters={};
+  S.meta.firstPrestigeUnlocked=true;
+  unlockAch('neon');
+  log('J-A-C-K-P-O-T COMPLETE · PRESTIGE GATE CLEARED','lg-big');
+  toast('JACKPOT COMPLETE · SMASH TABLE UNLOCKED');
+  flashJackpot();
+  if(!S.run.slot.unlocked){
+    S.run.slot.unlocked=true;
+    if(S.run.telemetry&&S.run.telemetry.slotUnlockedAt===null)S.run.telemetry.slotUnlockedAt=Math.round((Date.now()-S.run.started)/1000);
+    log('SLOT MACHINE UNLOCKED','lg-big');toast('NEW TOY: SLOT MACHINE');
+  }
+}
+
+/* --------------------------------------------------------------
+   11. SLOT
+   -------------------------------------------------------------- */
+function doSpin(isAuto){
+  if (S.run.busted || S.run.slot.busy) return;
+  var cost = slotCost();
+  if (S.run.cash < cost) return;
+  addCash(-cost);
+  S.meta.stats.spins++;
+  if (S.run.telemetry) S.run.telemetry.spins++;
+  S.run.slot.pot += CONFIG.slot.potContrib * stake();
+  S.run.slot.busy = true;
+
+  var final = [weightedIndex(CONFIG.slot.symbols), weightedIndex(CONFIG.slot.symbols), weightedIndex(CONFIG.slot.symbols)];
+  var ticks = 0;
+  var iv = setInterval(function(){
+    ticks++;
+    S.run.slot.reels = [RNG.int(CONFIG.slot.symbols.length), RNG.int(CONFIG.slot.symbols.length), RNG.int(CONFIG.slot.symbols.length)];
+    renderSlot();
+    if (ticks * 90 >= CONFIG.slot.spinMs){
+      clearInterval(iv);
+      S.run.slot.reels = final;
+      S.run.slot.busy = false;
+      settleSpin(final);
+      renderAll();
+    }
+  }, 90);
+}
+function settleSpin(r){
+  var syms = CONFIG.slot.symbols, win = 0, big = false;
+  if (r[0] === r[1] && r[1] === r[2]){
+    if (syms[r[0]].k === 'seven'){
+      win = S.run.slot.pot;
+      S.run.slot.pot = CONFIG.slot.potSeed * stake();
+      S.run.slotJackpots++; S.meta.stats.slotJackpots++;
+      big = true;
+      toast('777  SLOT JACKPOT  ' + money(win));
+      unlockAch('cloth');
+    } else {
+      win = syms[r[0]].p * stake();
+    }
+  } else {
+    var ch = 0;
+    for (var i=0;i<3;i++) if (syms[r[i]].k === 'cherry') ch++;
+    if (ch === 2) win = CONFIG.slot.twoCherry * stake();
+  }
+  if (win > 0){
+    addCash(win);
+    if (S.run.telemetry) S.run.telemetry.slotWins++;
+    log('SLOT win  ' + money(win), big ? 'lg-big' : 'lg-win');
+  }
+  else log('SLOT nothing', 'lg-lose');
+  S.run.slot.last = win;
+  checkBust();
+}
+
+/* --------------------------------------------------------------
+   12. Upgrades
+   -------------------------------------------------------------- */
+function buyUpgrade(id){
+  var u = CONFIG.upgrades[id];
+  if (S.run.up[id] >= u.ranks) return;
+  var cost = upgradeCost(id);
+  if (S.run.cash < cost) return;
+  addCash(-cost);
+  S.run.invested=(S.run.invested||0)+cost;
+  S.run.up[id]++;
+  if (S.run.telemetry) S.run.telemetry.upgradesBought++;
+  log('BOUGHT ' + u.name);
+  checkBust(); renderAll();
+}
+
+/* --------------------------------------------------------------
+   13. Unlocks, automation, bust
+   -------------------------------------------------------------- */
+function checkUnlocks(){
+  for (var i=0;i<CONFIG.coin.denominations.length;i++){
+    var d=CONFIG.coin.denominations[i];
+    if(!S.run.coin.shopUnlocked[d.id] && S.run.peak>=d.unlockPeak){
+      S.run.coin.shopUnlocked[d.id]=true;
+      log(d.name+' COIN SHOP UNLOCKED  '+d.label,'lg-big');
+      toast('NEW COIN SHOP: '+d.name+' '+d.label);
+    }
+  }
+  var sc=S.run.scratch;
+  if(!sc.unlocked && S.run.peak>=CONFIG.scratch.unlockPeak*stake()){
+    sc.unlocked=true;
+    if(S.run.telemetry && S.run.telemetry.scratchUnlockedAt===null) S.run.telemetry.scratchUnlockedAt=Math.round((Date.now()-S.run.started)/1000);
+    log('SCRATCH TABLE UNLOCKED','lg-big'); toast('NEW TOY: SCRATCH TABLE');
+  }
+}
+function coinAutoReady(){ return rank('flipper')>0 && S.run.scratch.unlocked; }
+function scratchAutoReady(){ return rank('tiny')>0 && S.run.slot.unlocked; }
+function slotAutoReady(){
+  // Slot is the newest toy in v0.1, so it must remain manual.
+  // Re-enable this when a later toy exists and takes over as YOUR TURN.
+  return false;
+}
+
+function checkBust(){
+  if (S.run.busted) return;
+  if (S.run.jcoin.active) return;
+  if (S.run.cash >= cheapestAction()) return;
+  if (S.run.jcoin.charges > 0) return;
+  if (S.run.scratch && S.run.scratch.cards && S.run.scratch.cards.some(function(c){return !c.done;})) return;
+  bust();
+}
+function chipsEarned(isBust){
+  if(!S.meta.firstPrestigeUnlocked) return 0;
+  var base=basePrestigeChips();
+  if(isBust && base>0) return Math.min(CONFIG.prestige.chipCap,base+1);
+  return base;
+}
+function bust(){
+  S.run.busted = true;
+  S.run.endReason='bust';
+  S.meta.stats.busts++;
+  if (S.meta.stats.busts >= 10) unlockAch('cat');
+  var chips = chipsEarned(true);
+  S.meta.chips += chips;
+  S.run.chipsAwarded = chips;
+  if (S.run.telemetry){
+    S.run.telemetry.bustAt = Math.round((Date.now()-S.run.started)/1000);
+    S.run.telemetry.chipsEarned = chips;
+    S.run.telemetry.prestigeType='bust';
+  }
+  save();
+  showBust(chips);
+}
+function showSmashConfirm(){
+  var chips=chipsEarned(false);
+  if(S.run.busted || chips<1 || !S.meta.firstPrestigeUnlocked) return;
+  openOverlay('<h2 style="color:#f2a08d">SMASH THE TABLE?</h2>'+
+    '<div class="sub">You do not need to die to prestige. Everything on this run is destroyed and you keep the chips.</div>'+
+    '<div class="bustNums"><div><span>TABLE SCORE</span><b>'+Math.floor(prestigeScore()).toLocaleString('en-US')+'</b></div>'+
+    '<div><span>CHIPS EARNED</span><b style="color:var(--gold)">+'+chips+'</b></div>'+
+    '<div><span>COINS DESTROYED</span><b>'+totalCoinCount()+'</b></div></div>'+
+    '<div class="hint">If you BUST instead, the same table score earns one extra danger chip.</div>'+
+    '<div class="row"><button class="btn danger big" data-act="confirmsmash">🔨 SMASH TABLE</button><button class="btn" data-act="close">KEEP PLAYING</button></div>');
+}
+function manualSmash(){
+  var chips=chipsEarned(false);
+  if(S.run.busted || chips<1 || !S.meta.firstPrestigeUnlocked) return;
+  S.meta.chips += chips;
+  S.run.chipsAwarded=chips;
+  S.run.manualSmashes=(S.run.manualSmashes||0)+1;
+  S.run.busted=true; // generic run-ended lock; endReason distinguishes this from a real bust
+  S.run.endReason='smash';
+  if(S.run.telemetry){
+    S.run.telemetry.chipsEarned=chips;
+    S.run.telemetry.prestigeType='smash';
+  }
+  save();
+  showSmashResult(chips);
+  toast('TABLE SMASHED · '+chips+' CHIP'+(chips===1?'':'S'));
+}
+function showSmashResult(chips){
+  openOverlay('<h2 style="color:#f2a08d">TABLE SMASHED</h2>'+
+    '<div class="sub">You cashed out the run on your terms. Spend chips before rebuilding the table.</div>'+
+    '<div class="bustNums"><div><span>TABLE SCORE</span><b>'+Math.floor(prestigeScore()).toLocaleString('en-US')+'</b></div>'+
+    '<div><span>CHIPS EARNED</span><b style="color:var(--gold)">+'+chips+'</b></div>'+
+    '<div><span>CHIPS TOTAL</span><b style="color:var(--gold)">'+S.meta.chips+'</b></div></div>'+
+    '<h3 style="letter-spacing:.14em;font-size:13px;margin:0 0 8px">SPEND YOUR CHIPS</h3>'+treeHtml()+
+    '<div class="row" style="margin-top:18px"><button class="btn gold big" data-act="newrun">BUILD A NEW TABLE</button>'+
+    '<span class="hint" style="margin:0">Chips keep. The table starts over.</span></div>');
+}
+function useSafePocket(){
+  if (S.run.safe.tokens <= 0 || S.run.busted) return;
+  var pct = CONFIG.treeEffects.safeProtect[Math.max(0,rank('safe')-1)];
+  var amt = S.run.cash * pct;
+  S.run.safe.tokens--;
+  // Protected cash leaves the live bankroll. It is moved, not duplicated.
+  S.run.cash -= amt;
+  S.run.safe.banked += amt;
+  S.meta.carryCash += amt;
+  if (S.run.telemetry) S.run.telemetry.safePocketUses++;
+  log('SAFE POCKET  ' + money(amt) + ' moved aside for the next run', 'lg-big');
+  toast('SAFE POCKET: ' + money(amt) + ' secured');
+  checkBust();
+  renderAll();
+}
+
+/* --------------------------------------------------------------
+   14. Prestige / skill tree
+   -------------------------------------------------------------- */
+function nodeCost(id){
+  var t = CONFIG.tree[id], r = rank(id);
+  if (r >= t.ranks) return null;
+  return t.costs[r];
+}
+function prereqMet(id){
+  var t=CONFIG.tree[id]; if(!t||!t.req)return true;
+  for(var k in t.req) if(rank(k)<t.req[k])return false;
+  return true;
+}
+function reqText(id){
+  var t=CONFIG.tree[id]; if(!t||!t.req)return '';
+  var a=[];for(var k in t.req)a.push(CONFIG.tree[k].name+' '+t.req[k]);
+  return a.join(' + ');
+}
+function buyNode(id){
+  var t = CONFIG.tree[id];
+  if (!t || t.future || !prereqMet(id)) return;
+  var c = nodeCost(id);
+  if (c === null || S.meta.chips < c) return;
+  S.meta.chips -= c;
+  S.meta.nodes[id] = rank(id) + 1;
+  save();
+  showTree(S.run.busted);
+}
+function newRun(){
+  S.meta.runCount++;
+  S.run = freshRun();
+  save();
+  closeOverlay();
+  renderAll();
+  log('RUN ' + S.meta.runCount + ' begins with one lonely $1 Copper Coin.');
+}
+
+/* --------------------------------------------------------------
+   15. Save / load / migrate
+   -------------------------------------------------------------- */
+function save(){
+  try{
+    var blob = { version: CONFIG.saveVersion, meta: S.meta, run: S.run, seed: RNG.get() };
+    localStorage.setItem(CONFIG.saveKey, JSON.stringify(blob));
+  }catch(e){}
+}
+function migrate(blob){
+  if(!blob.version || blob.version<1) blob.version=1;
+  if(blob.version<2 && blob.run){
+    var old=blob.run.coin||{}, oldTier=blob.run.tier||0;
+    blob.run.tier=0;
+    blob.run.coin={
+      pot:old.pot||CONFIG.coin.jackpot.seed,
+      chance:old.chance||(CONFIG.coin.jackpot.baseChance+CONFIG.treeEffects.jluckPerRank*((((blob.meta||{}).nodes||{}).jluck)||0)),
+      unlocked:{copper:true,silver:oldTier>=1||!!(blob.meta&&blob.meta.nodes&&blob.meta.nodes.bigcoin),gold:oldTier>=2},
+      face:{copper:(typeof old.face==='string'?old.face:'?'),silver:'?',gold:'?'},
+      last:{copper:(typeof old.last==='string'?old.last:null),silver:null,gold:null},
+      busy:{copper:false,silver:false,gold:false}
+    };
+    blob.version=2;
+  }
+  if(blob.version<3 && blob.run){
+    var oc=blob.run.coin||{}, unlocked=oc.unlocked||{copper:true,silver:false,gold:false}, coins=[], next=1;
+    coins.push(makeCoinObject(next++,'copper'));
+    if(unlocked.silver) coins.push(makeCoinObject(next++,'silver'));
+    if(unlocked.gold) coins.push(makeCoinObject(next++,'gold'));
+    blob.run.coin={
+      pot:oc.pot||CONFIG.coin.jackpot.seed,
+      chance:oc.chance||CONFIG.coin.jackpot.baseChance,
+      shopUnlocked:{copper:true,silver:!!unlocked.silver||!!(blob.meta&&blob.meta.nodes&&blob.meta.nodes.bigcoin),gold:!!unlocked.gold},
+      coins:coins,
+      nextCoinId:next,
+      cursor:{copper:0,silver:0,gold:0}
+    };
+    blob.run.up=blob.run.up||{lucky:0,payout:0};
+    if(blob.run.up.lucky===undefined) blob.run.up.lucky=0;
+    if(blob.run.up.payout===undefined) blob.run.up.payout=0;
+    if(blob.run.telemetry){
+      if(blob.run.telemetry.coinsBought===undefined) blob.run.telemetry.coinsBought=0;
+      if(blob.run.telemetry.autoCoinFlips===undefined) blob.run.telemetry.autoCoinFlips=0;
+    }
+    blob.version=3;
+  }
+
+  if(blob.version<4 && blob.run){
+    blob.run.invested=blob.run.invested||0;
+    blob.run.manualSmashes=blob.run.manualSmashes||0;
+    if(blob.run.coin){
+      blob.run.coin.handCursor=blob.run.coin.handCursor||0;
+      var list=blob.run.coin.coins||[];
+      for(var i=0;i<list.length;i++){
+        if(list[i].x===undefined){ var p=randomTablePosition(); list[i].x=p.x; list[i].y=p.y; list[i].r=p.r; }
+        list[i].oldX=list[i].x; list[i].oldY=list[i].y; list[i].oldR=list[i].r||0; list[i].busy=false;
+      }
+    }
+    blob.version=4;
+  }
+  if(blob.version<5 && blob.run){
+    if(blob.meta && blob.meta.firstPrestigeUnlocked===undefined) blob.meta.firstPrestigeUnlocked=((blob.meta.stats||{}).words||0)>0;
+    blob.run.scratch={unlocked:!!(blob.run.scratch&&blob.run.scratch.unlocked),letters:(blob.run.scratch&&blob.run.scratch.letters)||{},cards:[],nextCardId:1,cursor:0};
+    blob.run.abilities={powerReadyAt:0,caffeineReadyAt:0,caffeineUntil:0};
+    blob.version=5;
+  }
+  return blob;
+}
+function load(){
+  var raw = null;
+  try{ raw = localStorage.getItem(CONFIG.saveKey); }catch(e){}
+  if (!raw) return false;
+  try{
+    var blob = migrate(JSON.parse(raw));
+    if (!blob.meta || !blob.run) return false;
+    S = { meta: blob.meta, run: blob.run };
+    if (!S.meta.stats) S.meta.stats = freshMeta().stats;
+    if (!S.meta.cosmeticsUnlocked) S.meta.cosmeticsUnlocked = {};
+    if (S.meta.firstPrestigeUnlocked===undefined) S.meta.firstPrestigeUnlocked=(S.meta.stats.words||0)>0;
+    if (!S.run.telemetry){
+      S.run.telemetry = {
+        flips:0, coinWins:0, coinLosses:0,
+        coinByDenom:{ copper:0, silver:0, gold:0 },
+        coinsBought:0, autoCoinFlips:0,
+        cardsBought:0, scratchWins:0,
+        spins:0, slotWins:0,
+        upgradesBought:0, safePocketUses:0,
+        scratchUnlockedAt:null, slotUnlockedAt:null,
+        bustAt:null, chipsEarned:null, prestigeType:null
+      };
+    }
+    if (S.run.telemetry && !S.run.telemetry.coinByDenom) S.run.telemetry.coinByDenom = { copper:S.run.telemetry.flips||0, silver:0, gold:0 };
+    if (S.run.telemetry && S.run.telemetry.coinsBought===undefined) S.run.telemetry.coinsBought=0;
+    if (S.run.telemetry && S.run.telemetry.autoCoinFlips===undefined) S.run.telemetry.autoCoinFlips=0;
+    if (!S.run.up) S.run.up={lucky:0,payout:0};
+    if(S.run.endReason===undefined) S.run.endReason=S.run.busted?'bust':null;
+    if (!S.run.coin.cursor) S.run.coin.cursor={copper:0,silver:0,gold:0};
+    if (S.run.coin.handCursor===undefined) S.run.coin.handCursor=0;
+    if (S.run.invested===undefined) S.run.invested=0;
+    if(!S.run.abilities)S.run.abilities={powerReadyAt:0,caffeineReadyAt:0,caffeineUntil:0};
+    if(!S.run.scratch.cards)S.run.scratch={unlocked:!!S.run.scratch.unlocked,letters:S.run.scratch.letters||{},cards:[],nextCardId:1,cursor:0};
+    for(var ci=0;ci<S.run.coin.coins.length;ci++){
+      var cc=S.run.coin.coins[ci];
+      if(cc.x===undefined){ var pp=randomTablePosition(); cc.x=pp.x; cc.y=pp.y; cc.r=pp.r; }
+      cc.oldX=cc.x; cc.oldY=cc.y; cc.oldR=cc.r||0; cc.busy=false;
+    }
+    RNG.seed(blob.seed || S.meta.seed || 1);
+    return true;
+  }catch(e){ return false; }
+}
+function exportSave(){
+  var blob = { version: CONFIG.saveVersion, meta: S.meta, run: S.run, seed: RNG.get() };
+  return btoa(unescape(encodeURIComponent(JSON.stringify(blob))));
+}
+function importSave(str){
+  try{
+    var blob = migrate(JSON.parse(decodeURIComponent(escape(atob(str.trim())))));
+    if (!blob.meta || !blob.run) throw 0;
+    S = { meta: blob.meta, run: blob.run };
+    RNG.seed(blob.seed || 1);
+    save(); closeOverlay(); applyCosmetics(); renderAll();
+    toast('SAVE IMPORTED');
+  }catch(e){ alert('That does not look like a valid ONE MORE BET save.'); }
+}
+function hardReset(){
+  if (!confirm('Delete all progress, including chips and the skill tree?')) return;
+  try{ localStorage.removeItem(CONFIG.saveKey); }catch(e){}
+  S = { meta: freshMeta() };
+  RNG.seed(S.meta.seed);
+  S.run = freshRun();
+  save(); closeOverlay(); applyCosmetics(); renderAll();
+}
+
+/* --------------------------------------------------------------
+   16. Rendering
+   -------------------------------------------------------------- */
+function pct(x, d){ return (x*100).toFixed(d===undefined?1:d) + '%'; }
+
+function renderHUD(){
+  document.getElementById('hCash').textContent  = money(S.run.cash);
+  document.getElementById('hPeak').textContent = money(S.run.peak);
+  document.getElementById('hValue').textContent = money(tableValue());
+  document.getElementById('hTable').textContent = totalCoinCount() + ' / ' + CONFIG.coin.maxCoins;
+  document.getElementById('hRun').textContent   = S.meta.runCount;
+  document.getElementById('hChips').textContent = S.meta.chips;
+  var b = document.getElementById('bSafe');
+  var pctv = CONFIG.treeEffects.safeProtect[Math.max(0,rank('safe')-1)];
+  b.disabled = S.run.safe.tokens <= 0 || S.run.busted;
+  b.textContent = S.run.safe.tokens > 0 ? 'SAFE POCKET ×' + S.run.safe.tokens + '  (' + money(S.run.cash*pctv) + ')' : 'SAFE POCKET ×0';
+}
+function coinVisualSize(total){ if(total<=5)return 72; if(total<=15)return 62; if(total<=30)return 52; return 43; }
+function renderCoinShop(){
+  var el=document.getElementById('coinShopRail'), out='<div class="coinShop">';
+  for(var i=0;i<CONFIG.coin.denominations.length;i++){
+    var c=CONFIG.coin.denominations[i], unlocked=!!S.run.coin.shopUnlocked[c.id], owned=coinCount(c.id);
+    if(!unlocked){
+      out+='<div class="shopCard locked"><div class="shopTop"><div class="shopName">'+c.name+' '+c.label+'</div></div><div class="hint">UNLOCK AT PEAK '+money(c.unlockPeak)+'</div></div>';
+      continue;
+    }
+    var buy=coinPurchaseCost(c.id);
+    out+='<div class="shopCard"><div class="shopTop"><div class="shopName">'+c.name+' '+c.label+'</div><div class="shopOwned">OWNED ×'+owned+'</div></div>'+
+      '<div class="shopStats"><span>win <b>'+pct(headsChance(c.id),0)+'</b></span><span>H <b>+'+money(winAmount(c.id))+'</b></span><span>T <b>-'+money(lossAmount(c.id)).replace('$','')+'</b></span></div>'+
+      '<div class="shopActions"><button class="btn" data-act="buycoin" data-coin="'+c.id+'"'+((S.run.cash<buy||totalCoinCount()>=CONFIG.coin.maxCoins)?' disabled':'')+'>BUY · '+money(buy)+'</button></div></div>';
+  }
+  el.innerHTML=out+'</div><div class="hint">Coins stay separate physical bets. Hand upgrades flip mixed Copper / Silver / Gold together.</div>';
+}
+function renderPrestigeRail(){
+  var el=document.getElementById('prestigeRail'), chips=chipsEarned(false), next=nextPrestigeThreshold(), score=prestigeScore();
+  var base=basePrestigeChips(), prev=base>0?CONFIG.prestige.thresholds[Math.min(base-1,CONFIG.prestige.thresholds.length-1)]:0;
+  var goal=next===null?score:next;
+  var p=goal<=prev?1:Math.max(0,Math.min(1,(score-prev)/(goal-prev)));
+  var gate=S.meta.firstPrestigeUnlocked;
+  el.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px"><b>TABLE SCORE</b><b>'+Math.floor(score).toLocaleString('en-US')+'</b></div>'+
+    '<div class="valueBar"><i style="width:'+(p*100).toFixed(1)+'%"></i></div>'+
+    '<div class="hint" style="margin-top:0">'+(next===null?'MAX CHIP BAND':('next chip band at '+Math.round(next).toLocaleString('en-US')))+'</div>'+
+    (!gate?'<div class="hint" style="color:var(--warn);margin-top:7px">FIRST PRESTIGE LOCK: complete J-A-C-K-P-O-T once.</div>':'')+
+    '<button class="btn smashBtn" style="margin-top:8px" data-act="smash"'+((chips<1||S.run.busted||!gate)?' disabled':'')+'>🔨 SMASH TABLE · +'+chips+' CHIP'+(chips===1?'':'S')+'</button>'+
+    '<div class="hint">Manual prestige is safe. A real BUST only adds a danger chip after the prestige gate is open.</div>';
+}
+function abilityRemaining(readyAt){return Math.max(0,(readyAt||0)-Date.now());}
+function renderCoin(){
+  var el=document.getElementById('pCoin'), auto=coinAutoReady(), jc=S.run.jcoin;
+  var total=totalCoinCount(), sz=coinVisualSize(total);
+  var field='<div class="coinField"><div class="coinFieldTop"><span>THE TABLE · '+total+'/'+CONFIG.coin.maxCoins+' COINS</span><span>'+(auto?'🪲 COIN BUG WORKING':'CLICK ANY COIN OR USE YOUR HAND')+'</span></div>';
+  if(auto){
+    var bugs=1+rank('bugspeed');
+    for(var bb=0;bb<bugs;bb++) field+='<div class="tableBug" style="position:absolute;z-index:8;left:'+(12+bb*17)+'%;top:'+(18+bb*9)+'%;font-size:'+(20+bb*2)+'px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5));animation:bugWig '+(1.4+bb*.3)+'s ease-in-out infinite alternate">🪲</div>';
+  }
+  for(var j=0;j<S.run.coin.coins.length;j++){
+    var coin=S.run.coin.coins[j], cfg=coinCfg(coin.denom), face=coin.face==='H'?'H':coin.face==='T'?'T':cfg.label;
+    var ox=(coin.oldX===undefined?coin.x:coin.oldX), oy=(coin.oldY===undefined?coin.y:coin.oldY), orot=(coin.oldR===undefined?coin.r:coin.oldR);
+    field+='<button class="swarmCoin '+coin.denom+(S.meta.cosmeticsUnlocked['Sad Coin']?' sad':'')+(coin.busy?' jump':'')+'" data-act="flipone" data-coin-id="'+coin.id+'" title="'+cfg.name+' '+cfg.label+' · H +'+money(winAmount(coin.denom))+' / T -'+money(lossAmount(coin.denom)).replace('$','')+'" '+
+      'style="left:'+coin.x+'%;top:'+coin.y+'%;width:'+sz+'px;height:'+sz+'px;font-size:'+Math.max(10,Math.round(sz*.27))+'px;--old-x:'+ox+'%;--old-y:'+oy+'%;--new-x:'+coin.x+'%;--new-y:'+coin.y+'%;--old-r:'+orot+'deg;--new-r:'+coin.r+'deg;transform:rotate('+coin.r+'deg);z-index:'+(1+(coin.id%7))+'"'+
+      ((S.run.cash<lossAmount(coin.denom)||S.run.busted)?' disabled':'')+'><span class="coinFace">'+face+'</span></button>';
+  }
+  field+='</div>';
+  var hand=handCandidates(), handWorst=worstLoss(hand), handLabel=hand.length;
+  var now=Date.now(), prem=abilityRemaining(S.run.abilities.powerReadyAt), crem=abilityRemaining(S.run.abilities.caffeineReadyAt), hot=now<(S.run.abilities.caffeineUntil||0);
+  var ability='';
+  if(rank('power')>0){
+    ability+='<button class="btn ability '+(prem<=0?'ready':'')+'" data-act="powerflip"'+(prem>0?' disabled':'')+'>⚡ LOADED TOSS '+(prem>0?Math.ceil(prem/1000)+'s':'READY')+'</button>';
+  }
+  if(rank('caffeine')>0){
+    ability+='<button class="btn ability '+(hot?'hot ':(crem<=0?'ready ':''))+'" data-act="caffeine"'+((crem>0&&!hot)?' disabled':'')+'>☕ '+(hot?'CAFFEINE!':(crem>0?'COFFEE '+Math.ceil(crem/1000)+'s':'CAFFEINE RUSH'))+'</button>';
+  }
+  var handDock='<div class="handControl"><div style="display:flex;justify-content:space-between;margin-bottom:7px"><span class="tag edge">HAND CAP '+manualHandCap()+'</span><span class="hint" style="margin:0">mixed coins</span></div>'+
+    '<button class="btn gold big" data-act="fliphand"'+((!hand.length||S.run.busted)?' disabled':'')+'>FLIP HAND ×'+handLabel+'</button>'+
+    (ability?'<div class="row" style="margin-top:7px">'+ability+'</div>':'')+
+    '<div class="hint">Worst case for a normal throw: -'+money(handWorst).replace('$','')+'. The hand cycles through the swarm.</div></div>';
+  var potPct=Math.min(1,S.run.coin.chance/CONFIG.coin.jackpot.maxChance);
+  var jpDock='<div class="jackpotDock"><div class="meterWrap"><div class="meterTop"><span>SHARED COIN JACKPOT <b style="color:var(--gold)">'+money(S.run.coin.pot)+'</b></span><span>'+pct(S.run.coin.chance,2)+'</span></div><div class="meter"><i style="width:'+(potPct*100).toFixed(1)+'%"></i></div><div class="hint">Larger coins feed the same jackpot harder.</div></div></div>';
+  var ladder='';
+  if(jc.active){
+    ladder='<div class="jcoinDock"><b>JACKPOT COIN · '+money(jc.pot)+'</b><div class="hint">next survives '+pct(jcoinChance())+'</div><div class="row"><button class="btn gold" data-act="jpush">'+(jc.step===0?'FLIP':'FLIP AGAIN')+'</button><button class="btn" data-act="jtake"'+(jc.step<1?' disabled':'')+'>'+(jc.step<1?'TAKE AFTER A WIN':'TAKE')+'</button></div></div>';
+  }else{
+    ladder='<div class="jcoinDock"><button class="btn" data-act="jstart"'+(jc.charges<=0?' disabled':'')+'>JACKPOT COIN ×'+jc.charges+'</button><div class="hint">First flip is mandatory.</div></div>';
+  }
+  el.innerHTML=field+'<div class="tableControlDock">'+handDock+jpDock+ladder+'</div>';
+}
+function renderScratch(){
+  var el=document.getElementById('pScratch'), sc=S.run.scratch;
+  if(!sc.unlocked){
+    el.className='toy locked dockToy';
+    el.innerHTML='<div class="toyHead"><span class="ico">🎫</span><h2>SCRATCH SHOP</h2><span class="tag wait">LOCKED</span></div><div class="toyBody"><div class="hint">Opens at peak '+money(CONFIG.scratch.unlockPeak)+'.</div></div>';
+    return;
+  }
+  var w=CONFIG.scratch.word, word='';
+  for(var i=0;i<w.length;i++)word+='<span class="'+(sc.letters[w[i]]?'got':'')+'">'+w[i]+'</span>';
+  var out='<div class="toyHead"><span class="ico">🎫</span><h2>SCRATCH SHOP</h2><span class="tag active">'+sc.cards.length+'/'+cardCap()+'</span></div><div class="toyBody">'+
+    '<div class="wordRail">'+word+'</div>'+
+    '<div class="row" style="margin:0 0 7px"><button class="btn gold" data-act="scratchstack"'+(sc.cards.every(function(c){return c.done;})?' disabled':'')+'>SCRATCH ×'+Math.min(scratchBatchCap(),sc.cards.filter(function(c){return !c.done;}).length)+'</button>'+
+    '<button class="btn" data-act="cleardone">CLEAR DONE</button></div>';
+  var ids=['triple','sixer','chaos'];
+  for(var k=0;k<ids.length;k++){
+    var id=ids[k],cfg=scratchCfg(id),un=unlockedScratchKind(id);
+    out+='<div class="scratchShopRow '+(un?'':'locked')+'"><div class="title">'+cfg.name+' · '+money(cardCost(id))+'</div><div class="sub">'+cfg.desc+(un?'':' · unlock peak '+money(cfg.unlockPeak))+'</div>'+
+      '<div class="row" style="margin:0"><button class="btn" data-act="buyscr" data-kind="'+id+'" data-qty="1"'+((!un||S.run.cash<cardCost(id)||sc.cards.length>=cardCap())?' disabled':'')+'>BUY 1</button>'+
+      '<button class="btn" data-act="buyscr" data-kind="'+id+'" data-qty="5"'+((!un||S.run.cash<cardCost(id)||sc.cards.length>=cardCap())?' disabled':'')+'>BUY 5</button></div></div>';
+  }
+  if(rank('trash')>0)out+='<div class="hint">🗑 Trash Can unlocked: use THROW AWAY on a bad-looking ticket.</div>';
+  if(rank('xray')>0)out+='<div class="hint" style="color:#9de2ff">◉ X-RAY active on BLUE SIX / BLACK TEN.</div>';
+  el.innerHTML=out+'</div>';
+}
+function renderScratchField(){
+  var el=document.getElementById('scratchField'),cards=S.run.scratch.cards;
+  el.className=cards.length>45?'cardVeryDense':cards.length>20?'cardDense':'';
+  var out='',sz=cards.length;
+  for(var i=0;i<cards.length;i++){
+    var c=cards[i],cfg=scratchCfg(c.kind),cells='',xray=xrayText(c);
+    for(var j=0;j<c.cells.length;j++){
+      var cell=c.cells[j],face='';
+      if(cell.rev){
+        if(cell.letter)face=cell.letter;
+        else face=cfg.symbols[cell.s].g;
+      }
+      var cls='ticketCell'+(cell.rev?' rev':'')+(cell.letter&&cell.rev?' letter':'');
+      if(c.kind==='chaos'&&cell.rev&&!cell.letter)cls+=(cell.v<0?' bad':cell.v>0?' good':'');
+      cells+='<span class="'+cls+'">'+face+'</span>';
+    }
+    var res=c.done?(c.trashed?'TRASHED':(c.kind==='chaos'?'DONE':(c.prize>0?('+'+money(c.prize)):'NOTHING'))):'';
+    out+='<button class="scratchToken '+c.kind+(c.done?' done':'')+'" data-act="scratchcard" data-card="'+c.id+'" style="left:'+c.x+'%;top:'+c.y+'%;--r:'+c.r+'deg;z-index:'+(12+(c.id%12))+'"'+(c.done?' disabled':'')+'>'+
+      '<div class="ticketTop"><span>#'+c.id+'</span><span>'+money(cfg.cost)+'</span></div><div class="ticketName">'+cfg.name+'</div>'+
+      '<div class="ticketCells">'+cells+'</div><div class="ticketFoot"><span class="ticketResult '+(c.prize>0?'win':'lose')+'">'+res+'</span>'+(xray?'<span class="xrayBadge">X-RAY '+xray+'</span>':'')+'</div></button>';
+    if(rank('trash')>0&&!c.done){
+      out+='<button class="trashMini" data-act="trashscr" data-card="'+c.id+'" style="position:absolute;pointer-events:auto;left:'+(c.x+5)+'%;top:'+(c.y+7)+'%;z-index:'+(45+(c.id%10))+'">🗑</button>';
+    }
+  }
+  el.innerHTML=out;
+}
+function renderSlot(){
+  var el = document.getElementById('pSlot'), sl = S.run.slot;
+  if (!sl.unlocked){
+    el.className = 'toy locked';
+    el.innerHTML = '<div class="toyHead"><span class="ico">🎰</span><h2>SLOT MACHINE</h2>' +
+      '<span class="tag wait">LOCKED</span></div><div class="toyBody"><div class="hint">' +
+      'Opens the first time you complete J-A-C-K-P-O-T on the scratch cards.</div></div>';
+    return;
+  }
+  var auto = slotAutoReady();
+  el.className = 'toy active';
+  var tags = '<span class="tag active">YOUR TURN</span>';
+  if (auto) tags += '<span class="tag auto">AUTO</span>';
+
+  var reels = '';
+  for (var i=0;i<3;i++)
+    reels += '<div class="reel' + (sl.busy?' rolling':'') + '">' + CONFIG.slot.symbols[sl.reels[i]].g + '</div>';
+
+  var pay = '';
+  for (var j=0;j<CONFIG.slot.symbols.length;j++){
+    var s = CONFIG.slot.symbols[j];
+    pay += '<div>' + s.g + s.g + s.g + ' <b>' + (s.k==='seven' ? 'THE POT' : money(s.p*stake())) + '</b></div>';
+  }
+  pay += '<div>🍒🍒 any two <b>' + money(CONFIG.slot.twoCherry*stake()) + '</b></div>';
+
+  el.innerHTML =
+    '<div class="toyHead"><span class="ico">🎰</span><h2>SLOT MACHINE</h2>' + tags + '</div>' +
+    '<div class="toyBody">' +
+      '<div class="coinRow">' +
+        '<div class="reels">' + reels + '</div>' +
+        '<div><button class="btn gold big" data-act="spin"' + ((S.run.cash<slotCost()||sl.busy)?' disabled':'') + '>' +
+          'SPIN ' + money(slotCost()) + '</button></div>' +
+        '<div class="odds" style="flex-direction:column;gap:2px">' + pay + '</div>' +
+      '</div>' +
+      '<div class="meterWrap"><div class="meterTop">' +
+        '<span>SLOT POT  <b style="color:var(--gold)">' + money(sl.pot) + '</b></span>' +
+        '<span>' + money(CONFIG.slot.potContrib*stake()) + ' of every spin goes in</span></div>' +
+        '<div class="hint">Three sevens takes the whole pot. That is roughly one spin in ' +
+        Math.round(1/Math.pow(sevenProb(),3)).toLocaleString('en-US') + '.</div>' +
+      '</div>' +
+    '</div>';
+}
+function sevenProb(){
+  var tot = 0, sev = 0;
+  for (var i=0;i<CONFIG.slot.symbols.length;i++){
+    tot += CONFIG.slot.symbols[i].w;
+    if (CONFIG.slot.symbols[i].k === 'seven') sev = CONFIG.slot.symbols[i].w;
+  }
+  return sev/tot;
+}
+
+function renderUpgrades(){
+  var out = '';
+  for (var id in CONFIG.upgrades){
+    var u = CONFIG.upgrades[id], r = S.run.up[id];
+    if (r >= u.ranks){
+      out += '<div class="up" style="opacity:.55"><div><div class="nm">' + u.name + '</div>' +
+             '<div class="ds">' + u.desc + '</div></div><div class="pr">MAX</div></div>';
+    } else {
+      var c = upgradeCost(id);
+      out += '<button class="up" data-act="up" data-id="' + id + '"' + (S.run.cash<c?' disabled':'') + '>' +
+             '<div><div class="nm">' + u.name + (u.ranks>1?' '+(r+1)+'/'+u.ranks:'') + '</div>' +
+             '<div class="ds">' + u.desc + '</div></div><div class="pr">' + money(c) + '</div></button>';
+    }
+  }
+  out += '<div class="hint">These are wiped on every bust. They affect every physical coin on the table.</div>';
+  document.getElementById('ups').innerHTML = out;
+}
+
+function renderLog(){
+  var out = '';
+  for (var i=0;i<S.run.log.length;i++)
+    out += '<div class="' + S.run.log[i].c + '">' + S.run.log[i].t + '</div>';
+  document.getElementById('log').innerHTML = out;
+}
+
+function renderAll(){
+  renderHUD(); renderPrestigeRail(); renderCoinShop(); renderCoin(); renderScratch(); renderScratchField(); renderSlot(); renderUpgrades();
+}
+
+/* --------------------------------------------------------------
+   17. Overlays: bust, tree, menu
+   -------------------------------------------------------------- */
+function openOverlay(html){
+  document.getElementById('sheet').innerHTML = html;
+  document.getElementById('ov').classList.add('on');
+}
+function closeOverlay(){ document.getElementById('ov').classList.remove('on'); }
+
+function treeHtml(){
+  var branches=['HAND','LUCK','AUTO','SCRATCH','META'], names={HAND:'HAND / ACTIVE',LUCK:'LUCK / JACKPOT',AUTO:'AUTOMATION',SCRATCH:'SCRATCH TABLE',META:'META'};
+  var out='<div class="skillBranches">';
+  for(var b=0;b<branches.length;b++){
+    var br=branches[b],inner='';
+    for(var id in CONFIG.tree){
+      var t=CONFIG.tree[id]; if((t.branch||'META')!==br)continue;
+      var met=prereqMet(id),r=rank(id),c=nodeCost(id),maxed=(c===null),future=!!t.future;
+      if(t.hidden&&!met&&r===0)continue;
+      inner+='<button class="node'+(maxed?' max':'')+(!met?' lockedPath':'')+(t.hidden?' hiddenSkill':'')+'" data-act="node" data-id="'+id+'"'+
+        ((future||maxed||!met||S.meta.chips<c)?' disabled':'')+'><div class="nn">'+(t.hidden?'✦ ':'')+t.name+'</div><div class="nd">'+t.desc+'</div>'+
+        '<div class="nc">'+(future?'LOCKED · FUTURE TOY':(!met?'PATH LOCKED':(maxed?'MAXED':c+' chip'+(c>1?'s':''))))+'</div>'+
+        (t.ranks>1?'<div class="rk">rank '+r+' / '+t.ranks+'</div>':'')+
+        (!met?'<div class="req">requires '+reqText(id)+'</div>':'')+'</button>';
+    }
+    out+='<section class="skillBranch"><h3>'+names[br]+'</h3><div class="nodes">'+inner+'</div></section>';
+  }
+  return out+'</div>';
+}
+function showBust(chips){
+  var mins = Math.max(1, Math.round((Date.now()-S.run.started)/60000));
+  openOverlay(
+    '<h2 style="color:var(--lose)">BUST</h2>' +
+    '<div class="sub">You ran out of ways to pay. BUST gives one extra danger chip over a safe smash.</div>' +
+    '<div class="bustNums">' +
+      '<div><span>PEAK CASH</span><b>' + money(S.run.peak) + '</b></div>' +
+      '<div><span>RUN LENGTH</span><b>' + mins + ' min</b></div>' +
+      '<div><span>WORDS</span><b>' + S.run.words + '</b></div>' +
+      '<div><span>JACKPOTS</span><b>' + (S.run.coinJackpots + S.run.slotJackpots) + '</b></div>' +
+      '<div><span>CHIPS EARNED</span><b style="color:var(--gold)">+' + chips + '</b></div>' +
+      '<div><span>CHIPS TOTAL</span><b style="color:var(--gold)">' + S.meta.chips + '</b></div>' +
+      (S.run.safe.banked>0 ? '<div><span>SAFE POCKET</span><b style="color:var(--win)">' + money(S.run.safe.banked) + '</b></div>' : '') +
+    '</div>' +
+    '<h3 style="letter-spacing:.14em;font-size:13px;margin:0 0 8px">SPEND YOUR CHIPS</h3>' +
+    treeHtml() +
+    '<div class="row" style="margin-top:18px"><button class="btn gold big" data-act="newrun">NEW RUN</button>' +
+    '<span class="hint" style="margin:0">Chips keep. Everything else resets.</span></div>'
+  );
+}
+function showTree(fromBust){
+  if (fromBust) {
+    if(S.run.endReason==='smash') showSmashResult(S.run.chipsAwarded||0);
+    else showBust(S.run.chipsAwarded||0);
+    return;
+  }
+  openOverlay(
+    '<h2>SKILL TREE</h2>' +
+    '<div class="sub">' + S.meta.chips + ' chip' + (S.meta.chips===1?'':'s') + ' unspent. Earn them by smashing the table or by busting for a danger bonus.</div>' +
+    treeHtml() +
+    '<div class="row" style="margin-top:18px"><button class="btn" data-act="close">BACK TO THE TABLE</button></div>'
+  );
+}
+function telemetrySnapshot(){
+  var tm = S.run.telemetry || {};
+  return {
+    version: 1,
+    run: S.meta.runCount,
+    durationSec: Math.round((Date.now()-S.run.started)/1000),
+    coinShopsUnlocked: unlockedCoinIds(),
+    coinsOwned: totalCoinCount(),
+    ownedByDenom: {copper:coinCount('copper'),silver:coinCount('silver'),gold:coinCount('gold')},
+    manualHand: manualHandLabel(),
+    cash: Number(S.run.cash.toFixed(2)),
+    peakCash: Number(S.run.peak.toFixed(2)),
+    tableValue: Number(tableValue().toFixed(2)),
+    prestigeScore: Number(prestigeScore().toFixed(2)),
+    chipsTotal: S.meta.chips,
+    busted: !!S.run.busted,
+    flips: tm.flips||0,
+    coinWins: tm.coinWins||0,
+    coinLosses: tm.coinLosses||0,
+    coinByDenom: tm.coinByDenom || {copper:0,silver:0,gold:0},
+    coinsBought: tm.coinsBought||0,
+    autoCoinFlips: tm.autoCoinFlips||0,
+    cardsBought: tm.cardsBought||0,
+    scratchWins: tm.scratchWins||0,
+    spins: tm.spins||0,
+    slotWins: tm.slotWins||0,
+    upgradesBought: tm.upgradesBought||0,
+    safePocketUses: tm.safePocketUses||0,
+    scratchUnlockedAtSec: tm.scratchUnlockedAt,
+    slotUnlockedAtSec: tm.slotUnlockedAt,
+    bustAtSec: tm.bustAt,
+    chipsEarned: tm.chipsEarned,
+    prestigeType: tm.prestigeType||null,
+    wordsCompleted: S.run.words,
+    coinJackpots: S.run.coinJackpots,
+    slotJackpots: S.run.slotJackpots
+  };
+}
+function telemetryText(){
+  return JSON.stringify(telemetrySnapshot(), null, 2);
+}
+
+function showMenu(){
+  var debug = location.search.indexOf('debug') >= 0;
+  var achv = '';
+  for (var i=0;i<CONFIG.achievements.length;i++){
+    var a = CONFIG.achievements[i], got = !!S.meta.achievements[a.id];
+    achv += '<div style="opacity:' + (got?1:.45) + '">' + (got?'✔':'•') + ' <b>' + a.name + '</b> – ' + a.desc +
+            (a.cosmetic?' → ' + a.cosmetic:'') + '</div>';
+  }
+  openOverlay(
+    '<h2>MENU</h2><div class="sub">Run ' + S.meta.runCount + ' · best peak ' + money(S.meta.bestPeak) + '</div>' +
+    '<h3 style="font-size:12px;letter-spacing:.14em">ACHIEVEMENTS</h3><div style="font-size:12px;line-height:1.7">' + achv + '</div>' +
+    '<h3 style="font-size:12px;letter-spacing:.14em;margin-top:18px">PLAYTEST TELEMETRY</h3>' +
+    '<div class="hint" style="margin-top:0">Local-only run summary. Copy this after a playtest and send it with your notes.</div>' +
+    '<textarea id="telemetryBox" readonly>' + telemetryText() + '</textarea>' +
+    '<div class="row"><button class="btn" data-act="copytelemetry">COPY TELEMETRY</button></div>' +
+    '<h3 style="font-size:12px;letter-spacing:.14em;margin-top:18px">SAVE</h3>' +
+    '<div class="hint" style="margin-top:0">The game saves itself. This box is for moving a save between machines.</div>' +
+    '<textarea id="saveBox">' + exportSave() + '</textarea>' +
+    '<div class="row"><button class="btn" data-act="copysave">COPY</button>' +
+    '<button class="btn" data-act="importsave">IMPORT WHAT IS IN THE BOX</button>' +
+    '<button class="btn danger" data-act="reset">DELETE EVERYTHING</button></div>' +
+    (debug ? debugHtml() : '') +
+    '<div class="row" style="margin-top:18px"><button class="btn" data-act="close">BACK TO THE TABLE</button></div>'
+  );
+}
+function debugHtml(){
+  return '<h3 style="font-size:12px;letter-spacing:.14em;margin-top:18px;color:var(--warn)">DEBUG</h3>' +
+    '<div class="hint" style="margin-top:0">Visible only with ?debug=1 in the address. Seed makes a playtest repeatable.</div>' +
+    '<div class="row"><input type="number" id="seedIn" value="' + RNG.get() + '"><button class="btn" data-act="setseed">SET SEED</button>' +
+    '<button class="btn" data-act="dbgcash">+' + money(1000*stake()) + '</button>' +
+    '<button class="btn" data-act="dbgchips">+5 CHIPS</button>' +
+    '<button class="btn" data-act="dbgunlock">UNLOCK ALL TOYS</button>' +
+    '<button class="btn danger" data-act="dbgbust">FORCE BUST</button></div>';
+}
+
+/* --------------------------------------------------------------
+   18. Input
+   -------------------------------------------------------------- */
+document.addEventListener('click', function(e){
+  var t = e.target.closest('[data-act]');
+  if (!t) return;
+  var a = t.getAttribute('data-act');
+  switch(a){
+    case 'flipone':   flipOneCoin(t.getAttribute('data-coin-id')); break;
+    case 'fliphand':  flipHand(); break;
+    case 'powerflip': powerFlip(); break;
+    case 'caffeine':  caffeineRush(); break;
+    case 'flipdenom':  flipDenom(t.getAttribute('data-coin'), false); break;
+    case 'buycoin':    buyCoin(t.getAttribute('data-coin')); break;
+    case 'flipallowned': flipAllOwned(); break;
+    case 'jstart':     jcoinStart(); break;
+    case 'buyscr':     buyScratch(t.getAttribute('data-kind'),t.getAttribute('data-qty')); break;
+    case 'scratchcard':scratchCardClick(t.getAttribute('data-card')); break;
+    case 'scratchstack':scratchStack(); break;
+    case 'trashscr':   trashScratch(t.getAttribute('data-card')); break;
+    case 'cleardone':  clearDoneCards(); break;
+    case 'jpush':      jcoinPush(); break;
+    case 'jtake':      jcoinTake(); break;
+    case 'spin':       doSpin(false); break;
+    case 'up':         buyUpgrade(t.getAttribute('data-id')); break;
+    case 'safe':       useSafePocket(); break;
+    case 'smash':      showSmashConfirm(); break;
+    case 'confirmsmash': manualSmash(); break;
+    case 'tree':       showTree(S.run.busted); break;
+    case 'node':       buyNode(t.getAttribute('data-id')); break;
+    case 'newrun':     newRun(); break;
+    case 'menu':       showMenu(); break;
+    case 'close':      closeOverlay(); break;
+    case 'copysave':
+      var box = document.getElementById('saveBox'); box.select();
+      try{ document.execCommand('copy'); toast('SAVE COPIED'); }catch(err){}
+      break;
+    case 'copytelemetry':
+      var tbox = document.getElementById('telemetryBox'); tbox.select();
+      try{ document.execCommand('copy'); toast('TELEMETRY COPIED'); }catch(err){}
+      break;
+    case 'importsave': importSave(document.getElementById('saveBox').value); break;
+    case 'reset':      hardReset(); break;
+    case 'setseed':    RNG.seed(parseInt(document.getElementById('seedIn').value,10)||1); toast('SEED SET'); break;
+    case 'dbgcash':    addCash(1000*stake()); renderAll(); break;
+    case 'dbgchips':   S.meta.chips += 5; showMenu(); break;
+    case 'dbgunlock':
+      S.run.coin.shopUnlocked = {copper:true,silver:true,gold:true}; S.run.scratch.unlocked = true; S.run.slot.unlocked = true; S.meta.firstPrestigeUnlocked=true;
+      closeOverlay(); renderAll(); break;
+    case 'dbgbust':    S.run.cash = 0; closeOverlay(); checkBust(); renderAll(); break;
+  }
+});
+document.addEventListener('keydown', function(e){
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space'){ e.preventDefault(); if (!S.run.busted) primaryAction(); }
+});
+function primaryAction(){
+  if (S.run.jcoin.active) return;
+  if (S.run.slot.unlocked && S.run.cash >= slotCost()) doSpin(false);
+  else if (S.run.scratch.unlocked && S.run.scratch.cards.some(function(c){return !c.done;})) scratchStack();
+  else if (S.run.scratch.unlocked && S.run.cash >= cardCost('triple')) buyScratch('triple',1);
+  else flipHand();
+}
+
+/* --------------------------------------------------------------
+   19. Loops
+   -------------------------------------------------------------- */
+var autoLast={copper:0,silver:0,gold:0,scratch:0,caffeine:0};
+setInterval(function(){
+  if(!S||S.run.busted)return;
+  var now=Date.now();
+
+  // Caffeine is an active burst: hand flips rapidly at 90% with a modest win multiplier.
+  if(rank('caffeine')>0 && now<(S.run.abilities.caffeineUntil||0) && now-autoLast.caffeine>=CONFIG.treeEffects.caffeineTickMs){
+    autoLast.caffeine=now;
+    var batch=handCandidates();
+    if(batch.length)flipCoinBatch(batch,'CAFFEINE',true,{forcedChance:0.90,winMult:1.5});
+  }
+
+  if(coinAutoReady()){
+    var speedMult=Math.pow(.78,rank('bugspeed'));
+    for(var i=0;i<CONFIG.coin.denominations.length;i++){
+      var d=CONFIG.coin.denominations[i],ms=d.autoMs*speedMult;
+      if(now-autoLast[d.id]>=ms){autoLast[d.id]=now;autoFlipDenom(d.id);}
+    }
+  }
+
+  if(scratchAutoReady()){
+    var base=CONFIG.scratch.autoMs*Math.pow(.78,rank('scratchspeed'));
+    if(now<(S.run.abilities.caffeineUntil||0))base*=.25;
+    if(now-autoLast.scratch>=base){
+      autoLast.scratch=now;
+      var open=S.run.scratch.cards.filter(function(c){return !c.done;});
+      if(open.length)scratchWholeCard(open[0]);
+      checkBust();renderAll();
+    }
+  }
+},120);
+
+setInterval(function(){ if (S) save(); }, CONFIG.autosaveMs);
+
+/* --------------------------------------------------------------
+   20. Boot
+   -------------------------------------------------------------- */
+(function boot(){
+  var q = location.search.match(/seed=(\d+)/);
+  if (!load()){
+    S = { meta: freshMeta() };
+    RNG.seed(S.meta.seed);
+    S.run = freshRun();
+    log('Twenty dollars. One Copper Coin. Fill the felt, find JACKPOT, then smash it.');
+  }
+  if (q) RNG.seed(parseInt(q[1],10));
+  applyCosmetics();
+  renderAll();
+  renderLog();
+  if (S.run.busted) showBust(S.run.chipsAwarded||chipsEarned());
+})();
+</script>
+</body>
+</html>
