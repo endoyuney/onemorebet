@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ONE MORE BET v0.5 · Scratch Table + Skill Paths</title>
+<title>ONE MORE BET v0.5.1 · State Integrity</title>
 <style>
 /* ============================================================
    ONE MORE BET v0.1 - prototype stylesheet
@@ -403,7 +403,7 @@ body{overflow:hidden}
 <div id="wrap">
 
   <header id="hud">
-    <div class="brand">ONE MORE BET<small>v0.5 · TABLE CHAOS</small></div>
+    <div class="brand">ONE MORE BET<small>v0.5.1 · TABLE CHAOS</small></div>
     <div class="stat"><label>CASH</label><b class="cash" id="hCash">$0</b></div>
     <div class="stat"><label>PEAK</label><b id="hPeak">$0</b></div>
     <div class="stat"><label>TABLE VALUE</label><b id="hValue">$0</b></div>
@@ -440,7 +440,7 @@ body{overflow:hidden}
 
 <script>
 /* ==============================================================
-   ONE MORE BET v0.5 · TABLE CHAOS
+   ONE MORE BET v0.5.1 · TABLE CHAOS
    Single file prototype. No dependencies. Runs from file://
    All balance numbers live in CONFIG below.
    ============================================================== */
@@ -451,7 +451,7 @@ body{overflow:hidden}
 var CONFIG = {
 
   saveKey: 'oneMoreBet_save',
-  saveVersion: 5,
+  saveVersion: 6,
   autosaveMs: 5000,
 
   run: {
@@ -616,22 +616,21 @@ var CONFIG = {
    2. RNG - seeded so playtests can be reproduced
    -------------------------------------------------------------- */
 var RNG = (function(){
-  var s = 0;
-  function mulberry32(a){
-    return function(){
+  var s = 0, a = 0;
+  function next(){
       a |= 0; a = a + 0x6D2B79F5 | 0;
       var t = Math.imul(a ^ a >>> 15, 1 | a);
       t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };
   }
-  var fn = mulberry32(Math.floor(Math.random()*1e9));
   return {
-    seed:function(n){ s = n>>>0; fn = mulberry32(s); },
+    seed:function(n){ s = n>>>0; a = s; },
     get:function(){ return s; },
-    next:function(){ return fn(); },
-    chance:function(p){ return fn() < p; },
-    int:function(n){ return Math.floor(fn()*n); }
+    state:function(){ return a>>>0; },
+    restore:function(n){ a = n>>>0; },
+    next:next,
+    chance:function(p){ return next() < p; },
+    int:function(n){ return Math.floor(next()*n); }
   };
 })();
 
@@ -690,7 +689,7 @@ function freshRun(){
     jcoin: { charges: CONFIG.jcoin.baseCharges + CONFIG.treeEffects.goldenCharges * rank('golden'),
              active:false, pot:0, step:0 },
     scratch: { unlocked:false, letters:{}, cards:[], nextCardId:1, cursor:0 },
-    slot: { unlocked:false, pot: CONFIG.slot.potSeed, reels:[0,1,2], busy:false, last:null },
+    slot: { unlocked:false, pot: CONFIG.slot.potSeed, reels:[0,1,2], busy:false, pending:null, last:null },
     safe: { tokens: rank('safe')>0 ? CONFIG.treeEffects.safeTokens[rank('safe')-1] : 0, banked:0 },
     abilities:{ powerReadyAt:0, caffeineReadyAt:0, caffeineUntil:0 },
     words: 0, slotJackpots: 0, coinJackpots: 0,
@@ -864,10 +863,10 @@ function buyCoin(id){
   checkUnlocks(); checkBust(); renderAll();
 }
 function setCoinsBusy(coins){
-  var ids=[];
+  var owner=S.run, ids=[];
   for (var i=0;i<coins.length;i++){ coins[i].busy=true; ids.push(coins[i].id); }
   setTimeout(function(){
-    if (!S || !S.run || !S.run.coin || !S.run.coin.coins) return;
+    if (!S || S.run!==owner) return;
     for (var i=0;i<S.run.coin.coins.length;i++) if (ids.indexOf(S.run.coin.coins[i].id)>=0) S.run.coin.coins[i].busy=false;
     renderCoin();
   },570);
@@ -925,7 +924,7 @@ function oneFlipCoin(coin,opts){
 function worstLoss(coins){ var sum=0; for(var i=0;i<coins.length;i++) sum+=lossAmount(coins[i].denom); return sum; }
 function affordablePrefix(coins){
   var out=[],budget=S.run.cash,used=0;
-  for(var i=0;i<coins.length;i++){ var c=lossAmount(coins[i].denom); if(used+c>budget) break; used+=c; out.push(coins[i]); }
+  for(var i=0;i<coins.length;i++){ var c=lossAmount(coins[i].denom); if(used+c>budget) continue; used+=c; out.push(coins[i]); }
   return out;
 }
 function flipCoinBatch(coins,label,isAuto,opts){
@@ -948,15 +947,19 @@ function coinsOfDenom(id){
   var out=[]; for(var i=0;i<S.run.coin.coins.length;i++) if(S.run.coin.coins[i].denom===id) out.push(S.run.coin.coins[i]); return out;
 }
 function handCandidates(){
-  var all=S.run.coin.coins.slice(), n=Math.min(all.length,manualHandCap());
+  var all=S.run.coin.coins.slice();
   if(!all.length) return [];
   var start=(S.run.coin.handCursor||0)%all.length, out=[];
-  for(var i=0;i<n;i++) out.push(all[(start+i)%all.length]);
-  return affordablePrefix(out);
+  for(var i=0;i<all.length;i++) out.push(all[(start+i)%all.length]);
+  return affordablePrefix(out).slice(0,manualHandCap());
+}
+function advanceHand(batch){
+  var all=S.run.coin.coins;
+  if(batch.length) S.run.coin.handCursor=(all.indexOf(batch[batch.length-1])+1)%all.length;
 }
 function flipHand(){
   var batch=handCandidates(); if(!batch.length) return;
-  S.run.coin.handCursor=((S.run.coin.handCursor||0)+batch.length)%Math.max(1,S.run.coin.coins.length);
+  advanceHand(batch);
   flipCoinBatch(batch,'HAND',false);
 }
 function powerFlip(){
@@ -965,7 +968,7 @@ function powerFlip(){
   if(now < (S.run.abilities.powerReadyAt||0)) return;
   var batch=handCandidates().slice(0,5); if(!batch.length)return;
   S.run.abilities.powerReadyAt=now+CONFIG.treeEffects.powerCooldownMs;
-  S.run.coin.handCursor=((S.run.coin.handCursor||0)+batch.length)%Math.max(1,S.run.coin.coins.length);
+  advanceHand(batch);
   flipCoinBatch(batch,'LOADED TOSS',false,{forcedChance:0.90,winMult:5});
   toast('LOADED TOSS · 90% · ×5');
 }
@@ -1086,6 +1089,8 @@ function unlockedScratchKind(kind){ return S.run.peak>=scratchCfg(kind).unlockPe
 function buyScratch(kind,qty){
   qty=Math.max(1,parseInt(qty||1,10));
   if(S.run.busted || !S.run.scratch.unlocked || !unlockedScratchKind(kind))return;
+  // Make room for a real purchase without discarding unfinished tickets.
+  if(S.run.cash>=cardCost(kind)) S.run.scratch.cards=S.run.scratch.cards.filter(function(c){return !c.done;});
   var free=cardCap()-S.run.scratch.cards.length;
   qty=Math.min(qty,free);
   if(qty<=0)return;
@@ -1194,7 +1199,7 @@ function completeWord(){
    11. SLOT
    -------------------------------------------------------------- */
 function doSpin(isAuto){
-  if (S.run.busted || S.run.slot.busy) return;
+  if (S.run.busted || !S.run.slot.unlocked || S.run.slot.busy) return;
   var cost = slotCost();
   if (S.run.cash < cost) return;
   addCash(-cost);
@@ -1204,19 +1209,31 @@ function doSpin(isAuto){
   S.run.slot.busy = true;
 
   var final = [weightedIndex(CONFIG.slot.symbols), weightedIndex(CONFIG.slot.symbols), weightedIndex(CONFIG.slot.symbols)];
+  var owner=S.run;
+  var pending=owner.slot.pending={reels:final};
+  // Debit, outcome and RNG position are persisted together before animation.
+  save();
   var ticks = 0;
   var iv = setInterval(function(){
+    if(S.run!==owner || owner.slot.pending!==pending){ clearInterval(iv); return; }
     ticks++;
-    S.run.slot.reels = [RNG.int(CONFIG.slot.symbols.length), RNG.int(CONFIG.slot.symbols.length), RNG.int(CONFIG.slot.symbols.length)];
+    S.run.slot.reels = [0,0,0].map(function(){return Math.floor(Math.random()*CONFIG.slot.symbols.length);});
     renderSlot();
     if (ticks * 90 >= CONFIG.slot.spinMs){
       clearInterval(iv);
-      S.run.slot.reels = final;
-      S.run.slot.busy = false;
-      settleSpin(final);
+      settlePendingSpin(owner);
       renderAll();
     }
   }, 90);
+}
+function settlePendingSpin(owner){
+  if(S.run!==owner || !owner.slot.pending || owner.busted) return;
+  var final=owner.slot.pending.reels;
+  owner.slot.pending=null;
+  owner.slot.reels=final;
+  owner.slot.busy=false;
+  settleSpin(final);
+  save();
 }
 function settleSpin(r){
   var syms = CONFIG.slot.symbols, win = 0, big = false;
@@ -1291,6 +1308,7 @@ function slotAutoReady(){
 
 function checkBust(){
   if (S.run.busted) return;
+  if (S.run.slot.pending) return;
   if (S.run.jcoin.active) return;
   if (S.run.cash >= cheapestAction()) return;
   if (S.run.jcoin.charges > 0) return;
@@ -1304,6 +1322,7 @@ function chipsEarned(isBust){
   return base;
 }
 function bust(){
+  if(S.run.busted || S.run.slot.pending) return;
   S.run.busted = true;
   S.run.endReason='bust';
   S.meta.stats.busts++;
@@ -1320,6 +1339,7 @@ function bust(){
   showBust(chips);
 }
 function showSmashConfirm(){
+  if(S.run.slot.pending){ toast('WAIT FOR THE SPIN TO FINISH'); return; }
   var chips=chipsEarned(false);
   if(S.run.busted || chips<1 || !S.meta.firstPrestigeUnlocked) return;
   openOverlay('<h2 style="color:#f2a08d">SMASH THE TABLE?</h2>'+
@@ -1331,6 +1351,7 @@ function showSmashConfirm(){
     '<div class="row"><button class="btn danger big" data-act="confirmsmash">🔨 SMASH TABLE</button><button class="btn" data-act="close">KEEP PLAYING</button></div>');
 }
 function manualSmash(){
+  if(S.run.slot.pending){ toast('WAIT FOR THE SPIN TO FINISH'); return; }
   var chips=chipsEarned(false);
   if(S.run.busted || chips<1 || !S.meta.firstPrestigeUnlocked) return;
   S.meta.chips += chips;
@@ -1401,6 +1422,7 @@ function buyNode(id){
   showTree(S.run.busted);
 }
 function newRun(){
+  if(!S.run.busted) return;
   S.meta.runCount++;
   S.run = freshRun();
   save();
@@ -1414,11 +1436,12 @@ function newRun(){
    -------------------------------------------------------------- */
 function save(){
   try{
-    var blob = { version: CONFIG.saveVersion, meta: S.meta, run: S.run, seed: RNG.get() };
+    var blob = { version: CONFIG.saveVersion, meta: S.meta, run: S.run, seed: RNG.get(), rngState: RNG.state() };
     localStorage.setItem(CONFIG.saveKey, JSON.stringify(blob));
   }catch(e){}
 }
 function migrate(blob){
+  if(!blob || typeof blob!=='object' || blob.version>CONFIG.saveVersion) throw new Error('Unsupported save');
   if(!blob.version || blob.version<1) blob.version=1;
   if(blob.version<2 && blob.run){
     var old=blob.run.coin||{}, oldTier=blob.run.tier||0;
@@ -1475,15 +1498,40 @@ function migrate(blob){
     blob.run.abilities={powerReadyAt:0,caffeineReadyAt:0,caffeineUntil:0};
     blob.version=5;
   }
+  if(blob.version<6 && blob.run){
+    var slot=blob.run.slot;
+    if(slot && slot.busy){
+      // v5 saved the debit but lost the result. Refund this unresolved bet once.
+      blob.run.cash+=CONFIG.slot.cost;
+      slot.pot=Math.max(CONFIG.slot.potSeed,slot.pot-CONFIG.slot.potContrib);
+      if(blob.meta.stats) blob.meta.stats.spins=Math.max(0,(blob.meta.stats.spins||0)-1);
+      if(blob.run.telemetry) blob.run.telemetry.spins=Math.max(0,(blob.run.telemetry.spins||0)-1);
+      blob.run.saveRecovery='Legacy unfinished slot bet refunded';
+    }
+    if(slot){slot.busy=false;slot.pending=null;}
+    blob.rngState=(blob.seed===undefined?(blob.meta.seed||1):blob.seed)>>>0;
+    blob.version=6;
+  }
   return blob;
 }
 function load(){
   var raw = null;
   try{ raw = localStorage.getItem(CONFIG.saveKey); }catch(e){}
   if (!raw) return false;
+  try{ return restoreSave(JSON.parse(raw)); }catch(e){ return false; }
+}
+function restoreSave(input){
+  var previous=S, previousSeed=RNG.get(), previousState=RNG.state();
   try{
-    var blob = migrate(JSON.parse(raw));
-    if (!blob.meta || !blob.run) return false;
+    var blob = migrate(input), run=blob.run, meta=blob.meta;
+    if (!meta || !run || !meta.nodes || !meta.achievements ||
+        !Number.isFinite(run.cash) || !Number.isFinite(run.peak) || !Number.isFinite(meta.chips) ||
+        !run.coin || !Array.isArray(run.coin.coins) || !run.scratch || !run.slot || !run.safe || !run.jcoin ||
+        !Number.isInteger(blob.rngState) || blob.rngState<0 || blob.rngState>4294967295) throw new Error('Invalid save');
+    var pending=run.slot.pending;
+    if(pending && (run.busted || !Array.isArray(pending.reels) || pending.reels.length!==3 ||
+       pending.reels.some(function(n){return !Number.isInteger(n)||n<0||n>=CONFIG.slot.symbols.length;}))) throw new Error('Invalid pending spin');
+    if(run.slot.busy && !pending) throw new Error('Missing spin result');
     S = { meta: blob.meta, run: blob.run };
     if (!S.meta.stats) S.meta.stats = freshMeta().stats;
     if (!S.meta.cosmeticsUnlocked) S.meta.cosmeticsUnlocked = {};
@@ -1515,21 +1563,27 @@ function load(){
       if(cc.x===undefined){ var pp=randomTablePosition(); cc.x=pp.x; cc.y=pp.y; cc.r=pp.r; }
       cc.oldX=cc.x; cc.oldY=cc.y; cc.oldR=cc.r||0; cc.busy=false;
     }
-    RNG.seed(blob.seed || S.meta.seed || 1);
+    RNG.seed(blob.seed===undefined?(S.meta.seed||1):blob.seed);
+    RNG.restore(blob.rngState);
+    S.run.slot.busy=!!pending;
+    if(pending) settlePendingSpin(S.run);
+    else save(); // Persist migration, including a legacy refund, exactly once.
     return true;
-  }catch(e){ return false; }
+  }catch(e){ S=previous; RNG.seed(previousSeed); RNG.restore(previousState); return false; }
 }
 function exportSave(){
-  var blob = { version: CONFIG.saveVersion, meta: S.meta, run: S.run, seed: RNG.get() };
+  var blob = { version: CONFIG.saveVersion, meta: S.meta, run: S.run, seed: RNG.get(), rngState: RNG.state() };
   return btoa(unescape(encodeURIComponent(JSON.stringify(blob))));
 }
 function importSave(str){
   try{
-    var blob = migrate(JSON.parse(decodeURIComponent(escape(atob(str.trim())))));
-    if (!blob.meta || !blob.run) throw 0;
-    S = { meta: blob.meta, run: blob.run };
-    RNG.seed(blob.seed || 1);
+    var blob = JSON.parse(decodeURIComponent(escape(atob(str.trim()))));
+    if(!restoreSave(blob)) throw new Error('Invalid save');
     save(); closeOverlay(); applyCosmetics(); renderAll();
+    if(S.run.busted){
+      if(S.run.endReason==='smash') showSmashResult(S.run.chipsAwarded||0);
+      else showBust(S.run.chipsAwarded||0);
+    }
     toast('SAVE IMPORTED');
   }catch(e){ alert('That does not look like a valid ONE MORE BET save.'); }
 }
@@ -1645,8 +1699,8 @@ function renderScratch(){
   for(var k=0;k<ids.length;k++){
     var id=ids[k],cfg=scratchCfg(id),un=unlockedScratchKind(id);
     out+='<div class="scratchShopRow '+(un?'':'locked')+'"><div class="title">'+cfg.name+' · '+money(cardCost(id))+'</div><div class="sub">'+cfg.desc+(un?'':' · unlock peak '+money(cfg.unlockPeak))+'</div>'+
-      '<div class="row" style="margin:0"><button class="btn" data-act="buyscr" data-kind="'+id+'" data-qty="1"'+((!un||S.run.cash<cardCost(id)||sc.cards.length>=cardCap())?' disabled':'')+'>BUY 1</button>'+
-      '<button class="btn" data-act="buyscr" data-kind="'+id+'" data-qty="5"'+((!un||S.run.cash<cardCost(id)||sc.cards.length>=cardCap())?' disabled':'')+'>BUY 5</button></div></div>';
+      '<div class="row" style="margin:0"><button class="btn" data-act="buyscr" data-kind="'+id+'" data-qty="1"'+((!un||S.run.cash<cardCost(id)||sc.cards.filter(function(c){return !c.done;}).length>=cardCap())?' disabled':'')+'>BUY 1</button>'+
+      '<button class="btn" data-act="buyscr" data-kind="'+id+'" data-qty="5"'+((!un||S.run.cash<cardCost(id)||sc.cards.filter(function(c){return !c.done;}).length>=cardCap())?' disabled':'')+'>BUY 5</button></div></div>';
   }
   if(rank('trash')>0)out+='<div class="hint">🗑 Trash Can unlocked: use THROW AWAY on a bad-looking ticket.</div>';
   if(rank('xray')>0)out+='<div class="hint" style="color:#9de2ff">◉ X-RAY active on BLUE SIX / BLACK TEN.</div>';
@@ -2012,7 +2066,10 @@ setInterval(function(){ if (S) save(); }, CONFIG.autosaveMs);
   applyCosmetics();
   renderAll();
   renderLog();
-  if (S.run.busted) showBust(S.run.chipsAwarded||chipsEarned());
+  if (S.run.busted){
+    if(S.run.endReason==='smash') showSmashResult(S.run.chipsAwarded||0);
+    else showBust(S.run.chipsAwarded||0);
+  }
 })();
 </script>
 </body>
