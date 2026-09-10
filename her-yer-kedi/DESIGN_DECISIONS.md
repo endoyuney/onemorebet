@@ -43,3 +43,16 @@ Bu sürümün onaylanan kapsamı:
 - GitHub'da ayrı dal ve klasörde sürümlenmiş kaynak. Kullanıcı mevcut prototipi geliştirmeyi ve oynanabilir sürümü güncellemeyi istedi.
 
 Prototip tercihleri (yeni kilitli tasarım kuralı değildir): uyku 6 sn / +2 altın; yatak 12 altın, oda başına en çok iki; henüz özel uyku skill dalı yok. İkinci odada aynı arka plan kullanılır. Merdiven, üçüncü oda, daha fazla kaynak veya bakım cezası bu turda eklenmedi.
+
+## v0.2 sonrası kullanıcı playtesti: görsel yön onaylandı
+
+Yunus oyunu oynadı; oyunu ve mevcut görselliği çok beğendiğini belirtti. Mevcut ayrıntılı piksel görünümü, doğal kedi oranları ve sıcak salon atmosferi korunacak. Bu, proje sahibinin geri bildirimidir; dış oyuncu veya pazar doğrulaması değildir.
+
+Yeni açık geliştirme ihtiyaçları:
+
+- Altın ekonomisini dengelemek. Kullanıcı henüz altının hangi aşamada az/fazla geldiğini belirtmedi; bunu varsayarak genel fiyat artışı yapılmamalı.
+- İran, Sfenks, British, Scottish gibi farklı görünümler ve çok sayıda renk/desen. Yeni kediler yalnızca aynı sprite'ın renk değişimi olmamalı; kafa, kulak, tüy ve gövde siluetleri ayrışmalı.
+- Mevcut iki pozlu yürüyüş ve kedi etkileşim animasyonlarını geliştirmek.
+- Evin neredeyse tepeden görüntüsü ile kedilerin karşıdan/çapraz görünüşünü ortak, hafif yukarıdan çapraz bir perspektife getirmek. Kullanıcının tercihi çapraz bakış. Zemin, mobilya, kediler ve oyuncakların çizim açısı ve temas noktaları tutarlı olmalı.
+
+Henüz kararlaştırılmayanlar: yeni ırk sayısı, kesin kamera açısı, animasyon kare sayısı, ırka özel güçler, fiyatlar ve ödüller. Kedi çeşidini artırmak bütün bu seçeneklerin otomatik onayı değildir. Önce ortak perspektifte bir oda ve örnek kedilerle üretim kuralı oturtulması önerilir.
