@@ -1,0 +1,555 @@
+{
+  "generation_mode": "built-in image_gen",
+  "calls": 3,
+  "retries": 0,
+  "variants": 0,
+  "bounds_convention": "[left, top, right-exclusive, bottom-exclusive] in original pixels",
+  "notes": [
+    "Cat atlas returned 1254x1254 instead of requested 1536x1536. Equal cells are 418x418.",
+    "RGBA atlas previews can show RGB color beneath zero alpha; preserve and honor generated alpha.",
+    "Alpha body values are mostly 250–253; faint alpha 1–7 speckles extend beyond main objects.",
+    "Furniture in room is contained in roughly top 190 pixels. Left and right passages are roughly y=320..560. Room is slightly raised overhead, not perfectly vertical orthographic."
+  ],
+  "assets": {
+    "cats": {
+      "path": "dist/assets/cats.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "grid": [
+        3,
+        3
+      ],
+      "cell_size": [
+        418,
+        418
+      ],
+      "sha256": "b46cf09de5a0e67c5a388cba4851e6fb5dc83f488e0ffab6ec8d5aea0ad4079f",
+      "sprites": [
+        {
+          "name": "orange_stand",
+          "cell": [
+            0,
+            0,
+            418,
+            418
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              48,
+              75,
+              406,
+              411
+            ],
+            "64": [
+              48,
+              76,
+              406,
+              408
+            ],
+            "128": [
+              49,
+              76,
+              405,
+              408
+            ]
+          }
+        },
+        {
+          "name": "gray_stand",
+          "cell": [
+            418,
+            0,
+            836,
+            418
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              463,
+              75,
+              822,
+              411
+            ],
+            "64": [
+              465,
+              75,
+              821,
+              409
+            ],
+            "128": [
+              465,
+              75,
+              821,
+              408
+            ]
+          }
+        },
+        {
+          "name": "tuxedo_stand",
+          "cell": [
+            836,
+            0,
+            1254,
+            418
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              873,
+              74,
+              1232,
+              410
+            ],
+            "64": [
+              875,
+              76,
+              1231,
+              408
+            ],
+            "128": [
+              875,
+              76,
+              1231,
+              408
+            ]
+          }
+        },
+        {
+          "name": "orange_walk",
+          "cell": [
+            0,
+            418,
+            418,
+            836
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              45,
+              489,
+              410,
+              818
+            ],
+            "64": [
+              46,
+              492,
+              409,
+              816
+            ],
+            "128": [
+              46,
+              492,
+              404,
+              816
+            ]
+          }
+        },
+        {
+          "name": "gray_walk",
+          "cell": [
+            418,
+            418,
+            836,
+            836
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              458,
+              489,
+              826,
+              820
+            ],
+            "64": [
+              460,
+              492,
+              826,
+              819
+            ],
+            "128": [
+              460,
+              492,
+              825,
+              819
+            ]
+          }
+        },
+        {
+          "name": "tuxedo_walk",
+          "cell": [
+            836,
+            418,
+            1254,
+            836
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              869,
+              491,
+              1236,
+              820
+            ],
+            "64": [
+              869,
+              491,
+              1235,
+              819
+            ],
+            "128": [
+              870,
+              491,
+              1235,
+              819
+            ]
+          }
+        },
+        {
+          "name": "orange_sleep",
+          "cell": [
+            0,
+            836,
+            418,
+            1254
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              48,
+              936,
+              393,
+              1141
+            ],
+            "64": [
+              48,
+              939,
+              391,
+              1141
+            ],
+            "128": [
+              49,
+              939,
+              390,
+              1141
+            ]
+          }
+        },
+        {
+          "name": "gray_sleep",
+          "cell": [
+            418,
+            836,
+            836,
+            1254
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              458,
+              938,
+              807,
+              1141
+            ],
+            "64": [
+              460,
+              939,
+              807,
+              1140
+            ],
+            "128": [
+              461,
+              939,
+              807,
+              1140
+            ]
+          }
+        },
+        {
+          "name": "tuxedo_sleep",
+          "cell": [
+            836,
+            836,
+            1254,
+            1254
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              873,
+              937,
+              1221,
+              1141
+            ],
+            "64": [
+              875,
+              939,
+              1221,
+              1141
+            ],
+            "128": [
+              876,
+              940,
+              1221,
+              1140
+            ]
+          }
+        }
+      ]
+    },
+    "props": {
+      "path": "dist/assets/props.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "grid": [
+        4,
+        2
+      ],
+      "cell_size": [
+        384,
+        512
+      ],
+      "sha256": "a5bd46bf5c485679b39b773480ef2a4c6bbb18a78fe6fcca1029329f3cb0f0f7",
+      "sprites": [
+        {
+          "name": "tennis",
+          "cell": [
+            0,
+            0,
+            384,
+            512
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              139,
+              218,
+              253,
+              335
+            ],
+            "64": [
+              140,
+              219,
+              251,
+              334
+            ],
+            "128": [
+              140,
+              219,
+              251,
+              334
+            ]
+          }
+        },
+        {
+          "name": "football",
+          "cell": [
+            384,
+            0,
+            768,
+            512
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              479,
+              178,
+              661,
+              365
+            ],
+            "64": [
+              480,
+              179,
+              660,
+              364
+            ],
+            "128": [
+              480,
+              180,
+              660,
+              364
+            ]
+          }
+        },
+        {
+          "name": "basketball",
+          "cell": [
+            768,
+            0,
+            1152,
+            512
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              859,
+              174,
+              1054,
+              372
+            ],
+            "64": [
+              860,
+              175,
+              1052,
+              372
+            ],
+            "128": [
+              860,
+              175,
+              1052,
+              372
+            ]
+          }
+        },
+        {
+          "name": "bed",
+          "cell": [
+            1152,
+            0,
+            1536,
+            512
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              1153,
+              133,
+              1490,
+              408
+            ],
+            "64": [
+              1154,
+              133,
+              1490,
+              407
+            ],
+            "128": [
+              1154,
+              134,
+              1490,
+              407
+            ]
+          }
+        },
+        {
+          "name": "tower",
+          "cell": [
+            0,
+            512,
+            384,
+            1024
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              100,
+              551,
+              309,
+              896
+            ],
+            "64": [
+              102,
+              552,
+              308,
+              895
+            ],
+            "128": [
+              102,
+              552,
+              307,
+              895
+            ]
+          }
+        },
+        {
+          "name": "feather_wand",
+          "cell": [
+            384,
+            512,
+            768,
+            1024
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              447,
+              562,
+              727,
+              892
+            ],
+            "64": [
+              448,
+              563,
+              726,
+              891
+            ],
+            "128": [
+              448,
+              563,
+              726,
+              890
+            ]
+          }
+        },
+        {
+          "name": "scratch_board",
+          "cell": [
+            768,
+            512,
+            1152,
+            1024
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              807,
+              673,
+              1108,
+              830
+            ],
+            "64": [
+              808,
+              673,
+              1108,
+              829
+            ],
+            "128": [
+              808,
+              674,
+              1107,
+              829
+            ]
+          }
+        },
+        {
+          "name": "tunnel",
+          "cell": [
+            1152,
+            512,
+            1536,
+            1024
+          ],
+          "bounds_by_min_alpha": {
+            "8": [
+              1182,
+              621,
+              1487,
+              874
+            ],
+            "64": [
+              1183,
+              622,
+              1486,
+              873
+            ],
+            "128": [
+              1184,
+              622,
+              1486,
+              873
+            ]
+          }
+        }
+      ]
+    },
+    "room": {
+      "path": "dist/assets/room.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "c8a5a41eb57ec8756c4a26ad95d84dcbc147e25d24856bf94195ffe73044bed7"
+    }
+  }
+}
