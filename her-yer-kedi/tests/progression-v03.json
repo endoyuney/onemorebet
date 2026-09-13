@@ -1,0 +1,152 @@
+[
+  {
+    "seed": 11,
+    "seconds": 1219,
+    "milestones": {
+      "mice": 32,
+      "balls": 138,
+      "house": 192,
+      "basket": 259,
+      "rod": 367,
+      "floor2": 430,
+      "auto": 475,
+      "scratch": 623,
+      "room": 776,
+      "floor3": 865,
+      "surprise": 878,
+      "crowd": 964
+    },
+    "gold": 54,
+    "maxGold": 1279,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 14213,
+      "toys": 8160,
+      "skills": 3425,
+      "cats": 2425,
+      "care": 157
+    }
+  },
+  {
+    "seed": 22,
+    "seconds": 1234,
+    "milestones": {
+      "mice": 35,
+      "balls": 151,
+      "house": 200,
+      "basket": 274,
+      "rod": 371,
+      "floor2": 419,
+      "auto": 499,
+      "scratch": 648,
+      "room": 793,
+      "floor3": 875,
+      "surprise": 902,
+      "crowd": 984
+    },
+    "gold": 20,
+    "maxGold": 1245,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 13963,
+      "toys": 7946,
+      "skills": 3425,
+      "cats": 2425,
+      "care": 155
+    }
+  },
+  {
+    "seed": 33,
+    "seconds": 1190,
+    "milestones": {
+      "mice": 35,
+      "balls": 149,
+      "house": 196,
+      "basket": 268,
+      "rod": 373,
+      "floor2": 439,
+      "auto": 475,
+      "scratch": 616,
+      "room": 756,
+      "floor3": 836,
+      "surprise": 856,
+      "crowd": 952
+    },
+    "gold": 5,
+    "maxGold": 1230,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 13943,
+      "toys": 7945,
+      "skills": 3425,
+      "cats": 2425,
+      "care": 151
+    }
+  },
+  {
+    "seed": 44,
+    "seconds": 1218,
+    "milestones": {
+      "mice": 29,
+      "balls": 144,
+      "house": 191,
+      "basket": 272,
+      "rod": 378,
+      "floor2": 439,
+      "auto": 478,
+      "scratch": 625,
+      "room": 774,
+      "floor3": 859,
+      "surprise": 877,
+      "crowd": 976
+    },
+    "gold": 37,
+    "maxGold": 1237,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 14133,
+      "toys": 8096,
+      "skills": 3425,
+      "cats": 2425,
+      "care": 158
+    }
+  },
+  {
+    "seed": 55,
+    "seconds": 1205,
+    "milestones": {
+      "mice": 36,
+      "balls": 152,
+      "house": 206,
+      "basket": 276,
+      "rod": 376,
+      "floor2": 413,
+      "auto": 484,
+      "scratch": 625,
+      "room": 776,
+      "floor3": 858,
+      "surprise": 878,
+      "crowd": 968
+    },
+    "gold": 12,
+    "maxGold": 1212,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 13996,
+      "toys": 7989,
+      "skills": 3425,
+      "cats": 2425,
+      "care": 153
+    }
+  }
+]

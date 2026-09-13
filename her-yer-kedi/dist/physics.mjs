@@ -1,8 +1,8 @@
 // A floor plane plus height: no 3D engine or frame-rate-dependent gravity.
 export const ROOM_W=900,ROOM_H=600;
-export const BALLS={ball:{launch:190,bounce:.54,drag:1.4,reward:3},football:{launch:145,bounce:.32,drag:.65,reward:5},basketball:{launch:260,bounce:.72,drag:.95,reward:7}};
+export const BALLS={ball:{launch:190,bounce:.54,drag:1.4,reward:3},football:{launch:145,bounce:.32,drag:.65,reward:7},basketball:{launch:260,bounce:.72,drag:.95,reward:13}};
 export const DOOR={y:260,half:65};
-export const FURNITURE=[{x:280,y:15,w:330,h:95,height:65},{x:178,y:18,w:76,h:75,height:65}];
+export const FURNITURE=[{x:280,y:15,w:330,h:95,height:65},{x:178,y:18,w:76,h:75,height:65},{x:710,y:35,w:145,h:80,height:60}];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export function collideFurniture(t,rect,radius=13){
  if((t.z||0)>rect.height)return false;

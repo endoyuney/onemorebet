@@ -56,3 +56,13 @@ Yeni açık geliştirme ihtiyaçları:
 - Evin neredeyse tepeden görüntüsü ile kedilerin karşıdan/çapraz görünüşünü ortak, hafif yukarıdan çapraz bir perspektife getirmek. Kullanıcının tercihi çapraz bakış. Zemin, mobilya, kediler ve oyuncakların çizim açısı ve temas noktaları tutarlı olmalı.
 
 Henüz kararlaştırılmayanlar: yeni ırk sayısı, kesin kamera açısı, animasyon kare sayısı, ırka özel güçler, fiyatlar ve ödüller. Kedi çeşidini artırmak bütün bu seçeneklerin otomatik onayı değildir. Önce ortak perspektifte bir oda ve örnek kedilerle üretim kuralı oturtulması önerilir.
+
+## 13 Eylül 2026: v0.3 ekonomi ve etkileşim düzenlemesi
+
+Yunus altının çok hızlı biriktiğini, kedilerin kolay çoğaldığını ve oyuncaklar arasında belirgin fiyat/açılım katmanları istediğini açıkladı. Evdeki kedi evi kat yükseltmesiyle fiziksel olarak büyümeli; tünel geçişi ışınlanma gibi görünmemeli. Otomatik mama/su kapları kedi sayısıyla büyüyebilir, pasif gider oluşturabilir.
+
+Uygulanan ilk denge: toplar 2 → 5 → 10, olta 25, tahta 60 altın. Sıra yalnızca para biriktirerek atlanamaz; futbol ve basketbol deneyim eşikleri vardır. Olta açıldığında önceki toplar otomatikleştirilebilir. Yeni kedi maliyetlerine ek olarak ev gelişimine bağlı kapasite uygulanır. Kat becerileri mevcut kedi evlerini de yükseltir; biriktirilmiş ucuz evlerden bedelsiz yüksek ödül almamak için malzeme farkı maliyete eklenir.
+
+Bakım ana ekonomik fren değil, küçük sürekli giderdir. Oyuncak, keşif ve yeni kedi yatırımları ana harcamalardır. N kedi için N×(N+1)/2 altın/dakika; borç, açlıktan kayıp veya çevrimdışı ceza yoktur. Bakım son 4 altını tüketmez. Bu değerler ilk playtest ayarıdır.
+
+Kişilik ırkla eşitlenmemeli: kullanıcının aynı ırktaki iki kedisinin karakterleri farklıdır. Mevcut bireysel oyun tercihleri korunur; yeni ırklar, daha kapsamlı kişilik/animasyon ve ortak çapraz perspektif sonraki görsel çalışmada ele alınacaktır. v0.3 yeni ırk eklemez.
