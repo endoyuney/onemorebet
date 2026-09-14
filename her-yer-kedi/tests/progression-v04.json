@@ -1,0 +1,372 @@
+[
+  {
+    "seed": 11,
+    "strategy": "bare",
+    "furnitureVisits": {
+      "box": 0,
+      "swing": 0,
+      "bed": 0
+    },
+    "bonusGold": 0,
+    "seconds": 1622,
+    "milestones": {
+      "mice": 29,
+      "balls": 158,
+      "house": 247,
+      "basket": 401,
+      "rod": 509,
+      "floor2": 613,
+      "auto": 832,
+      "scratch": 947,
+      "room": 1090,
+      "floor3": 1150,
+      "surprise": 1158,
+      "crowd": 1272
+    },
+    "gold": 65,
+    "maxGold": 10065,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 137509,
+      "toys": 99748,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 204
+    }
+  },
+  {
+    "seed": 22,
+    "strategy": "bare",
+    "furnitureVisits": {
+      "box": 0,
+      "swing": 0,
+      "bed": 0
+    },
+    "bonusGold": 0,
+    "seconds": 1462,
+    "milestones": {
+      "mice": 34,
+      "balls": 175,
+      "house": 257,
+      "basket": 408,
+      "rod": 478,
+      "floor2": 497,
+      "auto": 781,
+      "scratch": 908,
+      "room": 1014,
+      "floor3": 1090,
+      "surprise": 1104,
+      "crowd": 1168
+    },
+    "gold": 294,
+    "maxGold": 10294,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 141896,
+      "toys": 103930,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 180
+    }
+  },
+  {
+    "seed": 33,
+    "strategy": "bare",
+    "furnitureVisits": {
+      "box": 0,
+      "swing": 0,
+      "bed": 0
+    },
+    "bonusGold": 0,
+    "seconds": 1501,
+    "milestones": {
+      "mice": 40,
+      "balls": 168,
+      "house": 248,
+      "basket": 364,
+      "rod": 475,
+      "floor2": 554,
+      "auto": 750,
+      "scratch": 962,
+      "room": 1061,
+      "floor3": 1145,
+      "surprise": 1159,
+      "crowd": 1240
+    },
+    "gold": 232,
+    "maxGold": 10234,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 137980,
+      "toys": 100066,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 190
+    }
+  },
+  {
+    "seed": 44,
+    "strategy": "bare",
+    "furnitureVisits": {
+      "box": 0,
+      "swing": 0,
+      "bed": 0
+    },
+    "bonusGold": 0,
+    "seconds": 1546,
+    "milestones": {
+      "mice": 32,
+      "balls": 194,
+      "house": 272,
+      "basket": 421,
+      "rod": 534,
+      "floor2": 554,
+      "auto": 887,
+      "scratch": 1018,
+      "room": 1134,
+      "floor3": 1216,
+      "surprise": 1250,
+      "crowd": 1331
+    },
+    "gold": 233,
+    "maxGold": 10235,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 137841,
+      "toys": 99932,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 184
+    }
+  },
+  {
+    "seed": 55,
+    "strategy": "bare",
+    "furnitureVisits": {
+      "box": 0,
+      "swing": 0,
+      "bed": 0
+    },
+    "bonusGold": 0,
+    "seconds": 1693,
+    "milestones": {
+      "mice": 38,
+      "balls": 173,
+      "house": 253,
+      "basket": 440,
+      "rod": 596,
+      "floor2": 696,
+      "auto": 1019,
+      "scratch": 1141,
+      "room": 1255,
+      "floor3": 1346,
+      "surprise": 1369,
+      "crowd": 1436
+    },
+    "gold": 299,
+    "maxGold": 10299,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 137218,
+      "toys": 99228,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 199
+    }
+  },
+  {
+    "seed": 11,
+    "strategy": "furnished",
+    "furnitureVisits": {
+      "box": 36,
+      "swing": 7,
+      "bed": 22
+    },
+    "bonusGold": 12521,
+    "seconds": 1466,
+    "milestones": {
+      "mice": 29,
+      "balls": 215,
+      "house": 284,
+      "basket": 484,
+      "rod": 596,
+      "floor2": 724,
+      "auto": 887,
+      "scratch": 991,
+      "room": 1096,
+      "floor3": 1156,
+      "surprise": 1177,
+      "crowd": 1244
+    },
+    "gold": 333,
+    "maxGold": 10333,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 114245,
+      "toys": 76254,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 166
+    }
+  },
+  {
+    "seed": 22,
+    "strategy": "furnished",
+    "furnitureVisits": {
+      "box": 35,
+      "swing": 9,
+      "bed": 15
+    },
+    "bonusGold": 12202,
+    "seconds": 1344,
+    "milestones": {
+      "mice": 34,
+      "balls": 212,
+      "house": 294,
+      "basket": 461,
+      "rod": 551,
+      "floor2": 564,
+      "auto": 772,
+      "scratch": 899,
+      "room": 996,
+      "floor3": 1066,
+      "surprise": 1069,
+      "crowd": 1130
+    },
+    "gold": 239,
+    "maxGold": 10239,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 112201,
+      "toys": 74316,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 154
+    }
+  },
+  {
+    "seed": 33,
+    "strategy": "furnished",
+    "furnitureVisits": {
+      "box": 35,
+      "swing": 14,
+      "bed": 16
+    },
+    "bonusGold": 12304,
+    "seconds": 1483,
+    "milestones": {
+      "mice": 40,
+      "balls": 227,
+      "house": 311,
+      "basket": 440,
+      "rod": 598,
+      "floor2": 725,
+      "auto": 902,
+      "scratch": 1051,
+      "room": 1134,
+      "floor3": 1208,
+      "surprise": 1214,
+      "crowd": 1295
+    },
+    "gold": 932,
+    "maxGold": 10932,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 111659,
+      "toys": 73068,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 167
+    }
+  },
+  {
+    "seed": 44,
+    "strategy": "furnished",
+    "furnitureVisits": {
+      "box": 46,
+      "swing": 3,
+      "bed": 15
+    },
+    "bonusGold": 12402,
+    "seconds": 1446,
+    "milestones": {
+      "mice": 32,
+      "balls": 226,
+      "house": 304,
+      "basket": 442,
+      "rod": 572,
+      "floor2": 598,
+      "auto": 838,
+      "scratch": 923,
+      "room": 1087,
+      "floor3": 1136,
+      "surprise": 1147,
+      "crowd": 1231
+    },
+    "gold": 182,
+    "maxGold": 10184,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 113975,
+      "toys": 76134,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 167
+    }
+  },
+  {
+    "seed": 55,
+    "strategy": "furnished",
+    "furnitureVisits": {
+      "box": 41,
+      "swing": 7,
+      "bed": 14
+    },
+    "bonusGold": 12001,
+    "seconds": 1446,
+    "milestones": {
+      "mice": 38,
+      "balls": 229,
+      "house": 320,
+      "basket": 464,
+      "rod": 556,
+      "floor2": 697,
+      "auto": 872,
+      "scratch": 958,
+      "room": 1056,
+      "floor3": 1132,
+      "surprise": 1133,
+      "crowd": 1229
+    },
+    "gold": 137,
+    "maxGold": 10139,
+    "cats": 6,
+    "drySeconds": 0,
+    "ledger": {
+      "opening": 8,
+      "earned": 110124,
+      "toys": 72330,
+      "skills": 20605,
+      "cats": 16895,
+      "care": 165
+    }
+  }
+]

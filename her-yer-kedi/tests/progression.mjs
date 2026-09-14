@@ -1,8 +1,10 @@
+const gameReserve=g=>g.available('basketball')?150:g.available('football')?50:8;
 import assert from 'node:assert/strict';
+import {FIXTURES} from '../dist/fixtures.mjs';
 import {Game} from '../dist/engine.mjs';
 const order=['mice','balls','house','basket','rod','floor2','auto','scratch','room','floor3','surprise','crowd'];
 const rows=[];
-for(const seed of [11,22,33,44,55]){
+for(const furnishings of [false,true])for(const seed of [11,22,33,44,55]){
  const g=new Game(seed),milestones={};let dry=0,maxGold=0;
  for(let frame=0;frame<60*3600&&!g.s.finished;frame++){
   if(frame%72===0){
@@ -11,7 +13,8 @@ for(const seed of [11,22,33,44,55]){
    const next=order.find(id=>!g.s.skills[id]);if(next&&g.canBuy(next))g.buySkill(next);
    for(let room=0;room<g.s.rooms.length;room++){
     g.switchRoom(room);const toys=g.s.rooms[room].toys;
-    if(toys.length<Math.min(7,g.s.cats.length+2)){
+    if(furnishings){for(const [kind,x,y,ready]of [['box',220,500,g.s.skills.mice],['swing',840,510,g.s.skills.basket],['bed',620,580,g.s.skills.rod]])if(ready&&g.available(kind)&&!toys.some(t=>t.kind===kind)&&g.s.gold>=g.cost(kind)+gameReserve(g))g.place(kind,x,y);}
+    if(toys.filter(t=>!FIXTURES[t.kind]).length<Math.min(7,g.s.cats.length+2)){
      let kind=g.available('rod')?'rod':g.available('basketball')?'basketball':g.available('football')?'football':'ball';
      if(g.s.skills.house&&(g.s.stats.house<2||g.s.stats.tunnel<20)&&!toys.some(t=>['house','tunnel'].includes(t.kind)))kind='house';
      if(g.s.skills.rod&&g.s.stats.feather<5&&!toys.some(t=>['rod','feather'].includes(t.kind)))kind='rod';
@@ -22,11 +25,11 @@ for(const seed of [11,22,33,44,55]){
    }
   }
   g.step(1/60);g.drain();for(const id of order)if(g.s.skills[id]&&milestones[id]===undefined)milestones[id]=Math.round(g.s.time);
-  if(g.s.rooms.every(r=>r.toys.length===0))dry+=1/60;maxGold=Math.max(maxGold,g.s.gold);
+  if(g.s.rooms.every(r=>r.toys.filter(t=>!FIXTURES[t.kind]).length===0))dry+=1/60;maxGold=Math.max(maxGold,g.s.gold);
   assert.ok(Number.isFinite(g.s.gold)&&g.s.gold>=0);
   const l=g.s.ledger;assert.equal(g.s.gold,l.opening+l.earned-l.toys-l.skills-l.cats-l.care);
  }
  assert.ok(g.s.finished,`seed ${seed} stalled: ${JSON.stringify({gold:g.s.gold,skills:g.s.skills,stats:g.s.stats,cats:g.s.cats.length,toys:g.s.rooms.map(r=>r.toys.map(t=>[t.kind,t.count,t.x,t.y])),modes:g.s.cats.map(c=>[c.mode,c.target,c.x,c.y])})}`);
  assert.ok(Game.load(g.save()));
- const row={seed,seconds:Math.round(g.s.time),milestones,gold:g.s.gold,maxGold,cats:g.s.cats.length,drySeconds:Math.round(dry),ledger:g.s.ledger};rows.push(row);console.log(JSON.stringify(row));
+ const row={seed,strategy:furnishings?'furnished':'bare',furnitureVisits:{box:g.s.stats.boxVisits,swing:g.s.stats.swingRides,bed:g.s.stats.naps},bonusGold:g.s.stats.bonusGold,seconds:Math.round(g.s.time),milestones,gold:g.s.gold,maxGold,cats:g.s.cats.length,drySeconds:Math.round(dry),ledger:g.s.ledger};rows.push(row);console.log(JSON.stringify(row));
 }

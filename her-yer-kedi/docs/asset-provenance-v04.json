@@ -1,0 +1,172 @@
+{
+  "generator": "Built-in image_gen: 2 original generations + 2 targeted transparency corrections; original atlases selected.",
+  "outputs": [
+    {
+      "file": "cats-poses-v04.png",
+      "original": "/workspace/scratch/43f043b75d63/generated_images/exec-ebd50fee-8d22-4e53-af80-c213b645237d.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "alphaValid": false,
+      "reference": "/workspace/sites/her-yer-kedi/dist/assets/cats.png",
+      "prompt": "Use case: stylized-concept. Asset type: original production pixel-art game sprite atlas. Create a transparent square 1536x1536 atlas with EXACTLY 3 columns and 3 rows, nine isolated full-body cat sprites, centered inside equal 512x512 cells with generous clear gutters. Use the attached cat reference ONLY as identity and pixel-art style reference; create the new poses specified here. Natural adult domestic cat proportions, detailed crisp pixel clusters, muted warm tones, textured fur, dark fine pixel outlines, same consistent visual scale throughout. Columns left to right: orange striped tabby with cream muzzle/chest and white paws, gray striped tabby with white muzzle/chest/paws, black-and-white tuxedo with white muzzle/chest/paws. Row 1: each cat SITTING UPRIGHT, front three-quarter view, head turned slightly toward viewer's right; forepaws resting together. Row 2: each cat WALKING AWAY from viewer toward upper right in rear three-quarter view, raised tail, walking gait pose A; visible hindquarters and back, head mostly away. Row 3: identical rear three-quarter walking-away direction but alternate paws stepping, gait pose B, so rows 2 and 3 animate together. Rear poses have a tiny tasteful dark pixel x under the raised tail, simple cartoon animal butt mark, subtle and non-graphic. Do not repeat the original standing side poses. All cats exactly same identity and apparent body scale across rows; entire tails and feet inside cells. Genuine transparent alpha backdrop; no scene, no floor, no shadow outside sprite, no glow, no checkerboard baked into pixels, no labels, no text, no cell dividers, no extra objects. Authentic detailed game pixel art matching reference, not chibi, not vector, not smooth painted illustration.",
+      "boundsFormat": "[left,top,rightExclusive,bottomExclusive]",
+      "boundsMethod": "Dark and chromatic foreground detection within each manually bounded row; includes whiskers. Not alpha bounds: output lacks alpha.",
+      "bounds": {
+        "sittingOrange": [
+          109,
+          62,
+          375,
+          413
+        ],
+        "sittingGray": [
+          496,
+          62,
+          763,
+          413
+        ],
+        "sittingTuxedo": [
+          889,
+          62,
+          1158,
+          413
+        ],
+        "rearAOrange": [
+          106,
+          443,
+          399,
+          796
+        ],
+        "rearAGray": [
+          495,
+          443,
+          793,
+          796
+        ],
+        "rearATuxedo": [
+          897,
+          443,
+          1195,
+          796
+        ],
+        "rearBOrange": [
+          104,
+          821,
+          399,
+          1193
+        ],
+        "rearBGray": [
+          494,
+          819,
+          791,
+          1193
+        ],
+        "rearBTuxedo": [
+          898,
+          821,
+          1192,
+          1193
+        ]
+      }
+    },
+    {
+      "file": "furniture-v04.png",
+      "original": "/workspace/scratch/43f043b75d63/generated_images/exec-351070f6-d7b1-4309-8668-3fe196fa4d96.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "alphaValid": false,
+      "reference": "/workspace/sites/her-yer-kedi/dist/assets/props.png",
+      "prompt": "Use case: stylized-concept. Asset type: original modular pixel-art game sprite atlas, exactly four components for runtime assembly. Create a genuine transparent square 1536x1536 image laid out as exactly 2 columns x 2 rows with each isolated component centered in its equal 768x768 cell with generous transparent gutters. Use attached props reference only for detailed pixel-art material texture, warm muted brown/cream palette and mild above/front three-quarter perspective. DO NOT copy its background. TOP LEFT: empty open warm brown cardboard cat box with BACK WALL, TWO SIDE WALLS and visible interior BASE, but completely OPEN FRONT with NO FRONT WALL OR FRONT LIP, so runtime cat can be layered inside. TOP RIGHT: matching separate FRONT CARDBOARD LIP PANEL only, same apparent scale and perspective as top-left box, a low broad cardboard front wall matching the box front opening exactly, isolated and detached. BOTTOM LEFT: warm wooden indoor cat swing A-frame structural stand ONLY, empty open triangular end supports with upper crossbar and stable feet, NO SWING SEAT, NO ROPES OR CHAINS, NO CATS, open central space. BOTTOM RIGHT: detached small swing seat ONLY, cream cushion atop a warm wooden base edge, same perspective and suitable width to fit the A-frame, NO ROPES OR CHAINS, NO FRAME, NO CATS. Four modular components total. Crisp detailed pixel clusters, fine dark pixel outlines, cardboard corrugation and wood grain in restrained pixel texture, natural functional proportions. No shadow outside components, no glow, no background scene, no floor, no text, no labels, no grid lines, no extra objects. Preserve actual transparent alpha throughout empty space.",
+      "boundsFormat": "[left,top,rightExclusive,bottomExclusive]",
+      "boundsMethod": "Connected dark/chromatic component detection. Not alpha bounds: output lacks alpha.",
+      "bounds": {
+        "boxBack": [
+          76,
+          87,
+          593,
+          497
+        ],
+        "boxFront": [
+          688,
+          338,
+          1185,
+          497
+        ],
+        "swingFrame": [
+          39,
+          628,
+          697,
+          1169
+        ],
+        "swingSeat": [
+          755,
+          955,
+          1220,
+          1141
+        ]
+      }
+    }
+  ],
+  "qualityLimitations": [
+    "Both images contain baked checkerboard backgrounds and no alpha channel, despite explicit transparency requests; background extraction required before shipping.",
+    "Generated dimensions are 1254 square despite requesting 1536 square.",
+    "Cat row spacing is not precisely uniform: third row begins above the equal-cell line; use measured rectangles instead of grid slicing.",
+    "Swing frame extends past the nominal left cell midpoint; use measured rectangle.",
+    "Box back is relatively tall; separate front lip panel width is 497 vs back overall width 517 and can be scaled to match.",
+    "Natural proportions, nine intended poses, alternate rear paw steps, tiny x marks, empty swing frame and separated box lip/seat all visually present."
+  ],
+  "alphaCorrectionAttempts": [
+    {
+      "file": "/workspace/scratch/43f043b75d63/v04-assets/cats-poses-v04-alpha-attempt.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "bands": [
+        "R",
+        "G",
+        "B"
+      ],
+      "corner": [
+        253,
+        253,
+        253
+      ],
+      "alphaValid": false
+    },
+    {
+      "file": "/workspace/scratch/43f043b75d63/v04-assets/furniture-v04-alpha-attempt.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "bands": [
+        "R",
+        "G",
+        "B"
+      ],
+      "corner": [
+        241,
+        243,
+        245
+      ],
+      "alphaValid": false
+    }
+  ],
+  "integration": {
+    "textures": [
+      "dist/assets/cats-poses-v04.webp",
+      "dist/assets/furniture-v04.webp"
+    ],
+    "format": "WebP quality 92 from original RGB outputs",
+    "alpha": "Runtime exterior-matte flood fill in sprite-import.mjs. Original files remain RGB.",
+    "visual_check": "Actual game Canvas frame inspected; no visible checkerboard behind selected sprites."
+  }
+}

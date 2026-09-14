@@ -10,17 +10,17 @@ function tunnelFixture(){const g=new Game(42),t=g.spawn('tunnel',450,350,0),c=g.
 test('toy progression requires each ball tier before the wand, even with abundant cash',()=>{
  const g=new Game();fund(g,10000);grant(g,'balls');assert.equal(g.available('basketball'),undefined);assert.equal(g.buySkill('rod'),false);assert.equal(g.buySkill('basket'),false);
  g.s.stats.football=12;assert.ok(g.buySkill('basket'));assert.equal(g.buySkill('rod'),false);g.s.stats.basketball=12;assert.ok(g.buySkill('rod'));
- assert.deepEqual(['ball','football','basketball','rod','scratch'].map(k=>g.cost(k)),[2,5,10,25,60]);
+ assert.deepEqual(['ball','football','basketball','rod','scratch'].map(k=>g.cost(k)),[2,50,150,400,1000]);
 });
 test('cat adoption requires home capacity as well as increasing gold prices',()=>{
- const g=new Game();fund(g,10000);assert.equal(g.catCost(),35);assert.ok(g.adopt());assert.equal(g.catCost(),140);const gold=g.s.gold;assert.equal(g.adopt(),false);assert.equal(g.s.gold,gold);
+ const g=new Game();fund(g,10000);assert.equal(g.catCost(),45);assert.ok(g.adopt());assert.equal(g.catCost(),450);const gold=g.s.gold;assert.equal(g.adopt(),false);assert.equal(g.s.gold,gold);
  grant(g,'house');assert.ok(g.adopt());assert.equal(g.adopt(),false);grant(g,'floor2');assert.ok(g.adopt());assert.equal(g.catLimit(),4);assert.equal(g.adopt(),false);
 });
 test('buying a floor upgrades existing houses and charges their construction difference',()=>{
- const g=new Game();fund(g,1000);grant(g,'house');g.s.stats.house=2;assert.ok(g.place('house',450,350));const t=g.s.rooms[0].toys[0];assert.equal(t.level,1);assert.equal(g.skillCost('floor2'),174);
- assert.ok(g.buySkill('floor2'));assert.equal(g.s.gold,808);assert.equal(t.level,2);assert.equal(t.buildProgress,0);assert.equal(g.cost('house'),32);assert.equal(g.complete(g.s.cats[0],t),false);
+ const g=new Game();fund(g,10000);grant(g,'house');g.s.stats.house=2;assert.ok(g.place('house',450,350));const t=g.s.rooms[0].toys[0];assert.equal(t.level,1);assert.equal(g.skillCost('floor2'),800);
+ assert.ok(g.buySkill('floor2'));assert.equal(g.s.gold,9120);assert.equal(t.level,2);assert.equal(t.buildProgress,0);assert.equal(g.cost('house'),180);assert.equal(g.complete(g.s.cats[0],t),false);
  const re=Game.load(g.save());assert.ok(re);advance(g,.8);advance(re,.8);assert.deepEqual(g.s,re.s);assert.equal(t.buildProgress,1);
- g.s.stats.tunnel=20;assert.equal(g.skillCost('floor3'),438);assert.ok(g.buySkill('floor3'));assert.equal(t.level,3);assert.equal(g.cost('house'),50);
+ g.s.stats.tunnel=20;assert.equal(g.skillCost('floor3'),2840);assert.ok(g.buySkill('floor3'));assert.equal(t.level,3);assert.equal(g.cost('house'),420);
 });
 test('tunnel advances continuously, counts only the exit and resumes mid-transit exactly',()=>{
  const {g,t,c}=tunnelFixture();assert.equal(g.complete(c,t),false);g.step(1/60);assert.equal(c.mode,'tunnel');assert.equal(t.count,0);const start=c.x;advance(g,.5);assert.ok(c.x>start&&c.x<tunnelEnds(t)[1].x);assert.equal(t.count,0);
@@ -36,7 +36,7 @@ test('automatic care scales with cat count and preserves four gold without debt'
  g.s.gold=20;advance(g,.5);assert.ok(g.s.gold>=19,'past unpaid care must not become debt');
 });
 test('care timer and the ninth automation second survive save/load',()=>{
- const g=new Game();grant(g,'auto');g.s.auto=true;g.s.rooms[0].autoTimer=8.5;g.s.careAcc=.9;fund(g,100);const re=Game.load(g.save());assert.ok(re);advance(g,2);advance(re,2);assert.deepEqual(g.s,re.s);assert.equal(g.s.ledger.toys,10);
+ const g=new Game();grant(g,'auto');g.s.auto=true;g.s.rooms[0].autoTimer=8.5;g.s.careAcc=.9;fund(g,100);const re=Game.load(g.save());assert.ok(re);advance(g,2);advance(re,2);assert.deepEqual(g.s,re.s);assert.equal(g.s.ledger.toys,50);
 });
 test('v2 migration preserves money, cats, old unlocks and is deterministic on the next load',()=>{
  const old=new Game().s;old.version=2;old.gold=765;old.skills={mice:true,balls:true,house:true,room:true,auto:true};old.rooms.push({name:'Oyun odası',toys:[],autoTimer:0});delete old.careAcc;delete old.ledger;

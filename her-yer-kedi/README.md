@@ -1,6 +1,6 @@
-# Her Yer Kedi — v0.3
+# Her Yer Kedi — v0.4
 
-Yunus'un ilk ticari oyun fikri için kısa, oynanabilir kedi/oyuncak prototipi. Ana konsept 10 Eylül 2026'da v0.1 playtestinden sonra onaylandı. Bu sürüm oyuncak aşamalarını, altın giderlerini, büyüyen kedi evini ve kesintisiz tünel geçişini deniyor.
+Yunus'un ilk ticari oyun fikri için kısa, oynanabilir kedi/oyuncak prototipi. Ana konsept 10 Eylül 2026'da v0.1 playtestinden sonra onaylandı. Bu sürüm kullanılan kalıcı eşyaları, oda bonuslarını ve daha ayrıntılı kedi hareketlerini deniyor.
 
 Canlı prototip: https://her-yer-kedi-yunus.hkh69nt4fv.chatgpt.site
 
@@ -8,19 +8,36 @@ GitHub: `endoyuney/onemorebet`, `feature/her-yer-kedi-v0.2`, `her-yer-kedi/` kla
 
 ## Oyna
 
-- Oyuncak seç → zemine dokun. Kediler oyuncağı kendileri fark edip oynar.
-- Topa tekrar dokun → zıplat. Topu sürükle/bırak → o yönde fırlat.
-- Tekerlek veya iki parmak → yakınlaştır; boş zemini sürükle → kamerayı kaydır.
-- Oda düğmesi → odaklan; **Ev / H** → bütün evi göster. Boşluk → seçili oyuncak. 1–7 → oyuncak seçimi.
-- Tenis: 2 altın / +3 ödül; futbol: 5 / +7; basketbol: 10 / +13. Toplar sırayla açılır. Fare dönüşümü açılınca iki fare tenis/futbol/basketbolda toplam +2/+4/+6 kazandırır. Olta 25, tırmalama tahtası 60 altındır; ikisi de önceki oyuncak deneyimini gerektirir.
-- Yatak: 40 altın, kalıcı; oda başına iki adet. Kediler oyun aralarında veya oda sakinken altı saniye uyur, tamamlanan uyku +2 altın verir. Uyku sonrası en az 18 saniye ara vardır. Mama/su otomatik ödenir: N kedi için N×(N+1)/2 altın/dakika. Son 4 altın korunur; ödenemeyen bakım borç olmaz. Kaplar kedi sayısıyla görsel olarak büyür.
-- Kedi evleri 1/2/3 katta 18/32/50 altın. Kat becerisi mevcut evlere gerçek kat ekler; mevcut evlerin malzeme farkı beceri ücretinde gösterilir. Tünelde geçiş 1,4 saniye sürer, sayaç yalnızca çıkışta artar.
-- Kedi kapasitesi ev geliştirmeleriyle 2 → 3 → 4 → 6 → 8 olur. Yeni kedi ücretleri 35 → 140 → 350 → 700 → 1200 → 2000 → 3200 altındır.
-- Toplar → fare/frizbi/böcek; ev → tünel; olta → tüy; tahta → sörf dönüşümleri korunur.
-- Yan oda açılınca kediler ve toplar kapıdan geçebilir. Kamera başka yerdeyken iki oda da çalışır.
-- Küçük final: iki oda, altı kedi, 20 tünel geçişi, bir tüy, üç sörf turu. Sonrasında dokuz yerel başarım ve keşifler devam eder.
-- Her 30 saniyede ücretsiz top. Menüler açıkken veya sekme gizliyken oyun durur. Çevrimdışı kazanç yok.
-- Otomatik kayıt aynı tarayıcıda tutulur; v0.1/v0.2 kayıtları altın/kedi/keşif kaybetmeden v0.3'e taşınır. Yeni açılım sırasına rağmen eski erişimler korunur. Yeni dengeyi sıfırdan değerlendirmek için kullanıcı kendi isteğiyle Yeni oyun seçebilir.
+- Oyuncak seç → zemine dokun. Topa dokunarak yeniden zıplat; topu sürükleyip bırakarak fırlat.
+- Tekerlek veya iki parmak → yakınlaştır. Zemini sürükle → kamerayı kaydır. Sabit eşyayı sürükle → aynı odada taşı.
+- **Ev / H** bütün evi gösterir. Boşluk seçili oyuncağı bırakır. 1–7 önceki oyuncak kısayolları; 8 kutu, 9 salıncak.
+- Oda 1100×700 birime genişletildi (önceki 900×600). Kamera ve kapılar yeni boyuta uyar; eski kayıtlar bir kez ölçeklenir.
+
+| Oyuncak | Alış | İlk ödül | Dönüşüm ödülü |
+|---|---:|---:|---:|
+| Tenis | 2 | 3 | İki fare toplam 2 |
+| Futbol | 50 | 58 | İki fare toplam 16 |
+| Basketbol | 150 | 175 | İki fare toplam 30 |
+| Olta | 400 | 470 | Tüy 90 |
+| Tırmalama | 1000 | 1120 | Üç sörf turu toplam 210 |
+
+Fare dönüşümü ilgili keşfi gerektirir. Sürpriz paket farklı dönüşümler açar. Oyuncak kedi evi hâlâ tüketilen dönüşüm oyuncağıdır: 1/2/3 kat 80/180/420 altın; devrilme 100/220/490 ve tünel 30/65/150 verir.
+
+### Kalıcı eşyalar
+
+| Eşya | Alış | Oda bonusu | Kullanım |
+|---|---:|---|---|
+| Kutu | 30 | +1 altın | İçine sıçra, otur, dışarı çık |
+| Salıncak | 280 | +%10 | Koltuğa çık, birlikte sallan, in |
+| Yatak | 100 | +%5 | Gönüllü uyku |
+
+**Kalıcı eşyalar doğrudan altın üretmez.** Bonus yalnızca o odada tamamlanan top, oyuncak ev, olta ve tahtanın ilk para ödülüne eklenir. Fare/tüy/sörf/tünel gibi zincir sonuçlarında yeniden uygulanmaz. Aynı eşyanın kopyaları bonusu artırmaz; oda toplamı en çok +1 ve +%15'tir. Kesirli bonus oda başına birikir. Bonus eşya odadayken geçerlidir; sürekli kullanma zorunluluğu yoktur.
+
+Oda başına 2 kutu, 2 yatak ve 1 salıncak yerleştirilebilir. Kullanım sırasında taşımak ziyareti güvenle iptal eder; para veya tamamlanma ödülü vermez. Kediler yoğun oyun sırasında bitirdikleri oyuncaklara göre mola verir; molalar arasında en az 60 sn vardır. Oda sakinken bu genel bekleme uygulanmaz.
+
+Kedi kapasitesi ev geliştirmeleriyle 2 → 3 → 4 → 6 → 8 olur. Yeni kedi ücretleri 45 → 450 → 1600 → 4800 → 10000 → 18000 → 30000 altındır. Mama/su N kedi için N×(N+1)/2 altın/dakika; son 4 altın korunur, borç veya çevrimdışı gider yoktur.
+
+Küçük final: iki oda, altı kedi, 20 tünel geçişi, bir tüy, üç sörf turu. Her 30 saniyede ücretsiz top; olta açıldıktan sonra önceki toplar otomatikleştirilebilir. Menüler ve gizli sekme oyunu duraklatır. Eski kayıtların altını, kedileri ve açılımları korunur. Yeni oyun seçmek mevcut kaydı siler.
 
 ## Çalıştırma ve kod
 
@@ -31,17 +48,19 @@ Derleme veya paket kurulumu gerekmez. Proje klasöründe `python -m http.server 
 - `dist/physics.mjs`: zemin + yükseklik fiziği, sekme, mobilya ve kapı çarpışmaları.
 - `dist/camera.mjs`: kamera koordinatları, odak, zoom ve kaydırma.
 - `dist/app.js`: Canvas çizimi, kontroller, yerel kayıt ve arayüz.
+- `dist/fixtures.mjs`: kalıcı eşya kullanımı, hareketi ve oda bonusu.
+- `dist/sprite-import.mjs`: yeni atlas bölgeleri ve çalışma anında dış matın saydamlaştırılması.
 - `dist/atlas.mjs`: özgün görsellerin sprite bölgeleri.
 
 ## Doğrulama
 
-`node --test tests/*.test.mjs` — 29 test: dönüşümler, ödüller, beceri koşulları, yeni top fiziği, kapı geçişi, yatak/uyku, kayıt devamlılığı ve kamera koordinatları; ayrıca aşama/kapasite kilitleri, kat maliyeti, tünelde kayıt ve bakım giderleri.
+`node --test tests/*.test.mjs` — 36 test: dönüşümler, ödüller, beceri koşulları, yeni top fiziği, kapı geçişi, yatak/uyku, kayıt devamlılığı ve kamera koordinatları; ayrıca aşama/kapasite kilitleri, kat maliyeti, tünelde kayıt ve bakım giderleri.
 
-`node tests/progression.mjs` — beş seed ile normal satın alma eylemleri kullanarak küçük finale ulaşır. Sonuçlar `tests/RESULTS.md` içindedir. Bu simülasyon insan eğlencesini veya gerçek oyuncu tamamlama süresini ölçmez. Bu sürümde tarayıcıda görsel/etkileşim playtesti yapılmadı.
+`node tests/progression.mjs` — sabit eşyalı/eşyasız iki strateji ve beş seed ile normal satın alma eylemleri kullanarak küçük finale ulaşır. Sonuçlar `tests/RESULTS.md` içindedir. Bu simülasyon insan eğlencesini veya gerçek oyuncu tamamlama süresini ölçmez. Gerçek Canvas çizim fonksiyonlarıyla bir sahne karesi kontrol edildi; tarayıcıda etkileşim veya insan playtesti yapılmadı.
 
 ## Görseller ve sınırlar
 
-Kedi, salon ve ana oyuncak atlasları bu proje için OpenAI image generation ile üretildi. Kullanıcının filigranlı referansı yalnızca görsel yön içindir; stok resim ve filigran oyuna alınmadı. Tam üretim istemleri ve kaynak boyutları `docs/` içindedir. Üç kedi görünümü, iki hareket pozu ve bir uyku pozu vardır; tam animasyon seti değildir. Fare, tüy, sörf gibi bazı ikincil oyuncaklar hâlâ platform emojileridir. Son görsel bütünlük çalışması bekler.
+Kedi, salon ve ana oyuncak atlasları bu proje için OpenAI image generation ile üretildi. Kullanıcının filigranlı referansı yalnızca görsel yön içindir; stok resim ve filigran oyuna alınmadı. Tam üretim istemleri ve kaynak boyutları `docs/` içindedir. Üç kedi görünümü korunur; her görünüşe oturma ve iki arka çapraz yürüyüş pozu eklendi. Arka pozlarda kuyruğun altında minik çarpı detayı vardır. Kutu ve salıncak giriş/kullanım/çıkışı zaman içinde canlandırılır; tam sekiz yönlü animasyon seti değildir. Fare, tüy, sörf gibi bazı ikincil oyuncaklar hâlâ platform emojileridir. Son görsel bütünlük çalışması bekler.
 
 Bu kısa prototip, planlanan birkaç saatlik ticari kampanya değildir. Yalnızca iki oda vardır; ikinci oda aynı salon zeminini kullanır. Merdiven/üçüncü oda eklenmedi. Oda kapasitesi dönüşümden doğan ek oyuncakları sınırlayabilir. Tam 3D fizik, Steam bağlantısı veya çevrimdışı ilerleme içermez.
 

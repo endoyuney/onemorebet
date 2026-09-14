@@ -66,3 +66,15 @@ Uygulanan ilk denge: toplar 2 → 5 → 10, olta 25, tahta 60 altın. Sıra yaln
 Bakım ana ekonomik fren değil, küçük sürekli giderdir. Oyuncak, keşif ve yeni kedi yatırımları ana harcamalardır. N kedi için N×(N+1)/2 altın/dakika; borç, açlıktan kayıp veya çevrimdışı ceza yoktur. Bakım son 4 altını tüketmez. Bu değerler ilk playtest ayarıdır.
 
 Kişilik ırkla eşitlenmemeli: kullanıcının aynı ırktaki iki kedisinin karakterleri farklıdır. Mevcut bireysel oyun tercihleri korunur; yeni ırklar, daha kapsamlı kişilik/animasyon ve ortak çapraz perspektif sonraki görsel çalışmada ele alınacaktır. v0.3 yeni ırk eklemez.
+
+## 14 Eylül 2026: Kullanılan kalıcı eşyalar
+
+Kullanıcı Instagram kaydındaki salıncak, içine oturulan kutu ve arkadan kedi pozlarını beğendi; ilk kutu/salıncak/oturma/arka poz paketini onayladı. Minik çarpı detayı yalnızca uygun arka pozlarda kullanılır. Referans görüntülerden sprite alınmaz.
+
+Sonraki yönlendirme önceki kalıcı eşya ödülü önerisini değiştirir: kalıcı eşyalar para üretmez; kullanılabilir olur ve oyuncak ödülüne bonus sağlar. v0.4 yatağın doğrudan uyku ödemesini de kaldırır. Kutu +1, salıncak %10, yatak %5; kopyalar birikmez, toplam +1 ve %15 ile sınırlıdır. Bonus odadadır ve yalnızca ana oyuncağın ilk para ödülüne uygulanır. Tüketilen oyuncak ev → tünel zinciri korunur.
+
+Futbol topu kullanıcının isteğiyle 50 altınlık basamağa taşındı. Diğer fiyat/ödüller birlikte ayarlandı. Oda yaklaşık %43 daha geniş zemin alanına sahip oldu. Kutu, salıncak ve yatak aynı odada sürüklenerek yeniden yerleştirilebilir.
+
+İlk simülasyonda her dört pati vuruşundan sonra mola vermek sabit eşyalı oyunu yavaşlattı. Yoğun oyunda tamamlanan oyuncaklara göre mola ve bütün kalıcı eşyalar için ortak 60 sn mola aralığı uygulanınca, beş seed'de sabit eşyalı strateji eşyasız stratejiden daha erken finale ulaştı. Bu tek strateji ailesinin sonucu, optimal ekonomi veya insan playtesti kanıtı değildir.
+
+Kaydırak ve kedi evine asılı top hâlâ sonraki paketin fikirleridir; bu sürüme eklenmedi. Yeni ırklar ve tamamen ortak çapraz oda perspektifi henüz yapılmadı.

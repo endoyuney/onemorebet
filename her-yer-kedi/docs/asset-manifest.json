@@ -551,5 +551,28 @@
       "mode": "RGB",
       "sha256": "c8a5a41eb57ec8756c4a26ad95d84dcbc147e25d24856bf94195ffe73044bed7"
     }
+  },
+  "v04": {
+    "provenance": "docs/asset-provenance-v04.json",
+    "assets": [
+      {
+        "path": "dist/assets/cats-poses-v04.webp",
+        "dimensions": [
+          1254,
+          1254
+        ],
+        "sourceMode": "RGB",
+        "sha256": "67a2e015b4cd1bd66e45112649855a37e0b74df4a512ab3c1d77779f519c1bb0"
+      },
+      {
+        "path": "dist/assets/furniture-v04.webp",
+        "dimensions": [
+          1254,
+          1254
+        ],
+        "sourceMode": "RGB",
+        "sha256": "f7f7cd904459db60110768b5ab02d9d08c86888ecc3ae22215b4901be6ebed80"
+      }
+    ]
   }
 }

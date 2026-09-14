@@ -1,19 +1,17 @@
-# v0.3 doğrulama — 13 Eylül 2026
+# v0.4 doğrulama — 14 Eylül 2026
 
-29/29 otomatik test geçti. JavaScript modüllerinin sözdizimi kontrolleri geçti. Beş RNG seed için gerçek oyun motorunda normal satın alma eylemleri kullanıldı; para, kedi veya beceri eklenmedi. Her adımda altın defteri dengesi ve negatif olmayan nakit; finalde kaydın yüklenebilmesi doğrulandı.
+36/36 test geçti. JavaScript sözdizimi ve dosya yolları kontrol edildi. Gerçek Canvas çizim fonksiyonları kullanılarak kutu/salıncak/yatak/arka kedi içeren sahne karesi incelendi; bu bir tarayıcı veya insan playtesti değildir.
 
-| Seed | Final (sn) | İlk dönüşüm | Futbol | Basketbol | Olta | Yan oda | Bakım gideri | Final altını |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 11 | 1219 | 32 | 138 | 259 | 367 | 776 | 157 | 54 |
-| 22 | 1234 | 35 | 151 | 274 | 371 | 793 | 155 | 20 |
-| 33 | 1190 | 35 | 149 | 268 | 373 | 756 | 151 | 5 |
-| 44 | 1218 | 29 | 144 | 272 | 378 | 774 | 158 | 37 |
-| 55 | 1205 | 36 | 152 | 276 | 376 | 776 | 153 | 12 |
+| Seed | Eşyasız final (sn) | Eşyalı final (sn) | Eşyalı bonus altın | Kutu / salıncak / uyku ziyaretleri |
+|---|---:|---:|---:|---|
+| 11 | 1622 | 1466 | 12521 | 36 / 7 / 22 |
+| 22 | 1462 | 1344 | 12202 | 35 / 9 / 15 |
+| 33 | 1501 | 1483 | 12304 | 35 / 14 / 16 |
+| 44 | 1546 | 1446 | 12402 | 46 / 3 / 15 |
+| 55 | 1693 | 1446 | 12001 | 41 / 7 / 14 |
 
-Bütün zamanlar simülasyon saniyesidir. Hedefleri bilen bot 1,2 saniyede bir satın alma kararı verir; yeni oyuncunun düşünme/menü süresi dahil değildir. Bot finale 19,8–20,6 dakikada ulaştı; ilk kalıcı dönüşüm 29–36 saniyede açıldı. Beş koşuda bütün odaların aynı anda oyuncaksız kaldığı süre yuvarlamayla 0 saniyedir. Tam sonuçlar progression-v03.json içinde.
+Aynı bot, aynı karar sıklığı (1,2 sn) ve beş seed ile iki strateji kullanıldı. Para, kedi veya beceri eklenmedi. Eşyalı bot, ilerleme aşamasına ve kalan oyuncak bütçesine göre her odaya bir kutu, salıncak ve yatak alır. Her adımda altın muhasebesi ve negatif olmayan bakiye; finalde kaydın yüklenmesi kontrol edildi. Eşyalı 22,4–24,7 dakika; eşyasız 24,4–28,2 dakika. Bu süreler gerçek oyuncu süresi, bütün stratejilerin taraması veya nihai birkaç saatlik kampanya değildir.
 
-Bu beş koşu tek satın alma stratejisidir; optimal strateji kanıtı, insan eğlencesi veya nihai oyun süresi değildir. Önceki v0.2 botu farklı karar sıklığı kullandığından eski/yeni süre oranı kontrollü bir kıyas sayılmaz. Ana giderler oyuncak, keşif ve kedi alımlarıdır. Mama/su bu koşularda brüt gelirin yaklaşık %1,1'ini götürdü; ekonomiyi tek başına dengelemesi beklenmez.
+Sabit eşyalı bir odanın tek başına altın üretmediği, kopyaların bonusu artırmadığı, bonusun aynı odadaki ilk ödüle bir kez eklendiği, kesirlerin korunması, eşya taşımanın ödeme yapmadığı, kullanım sırasında kayıt/yükleme ve eski konumların tek seferlik aktarımı test edildi. Önceki ekonomi, tünel, kat, top fiziği ve kamera kontrolleri de geçti.
 
-Yeni kontroller: para ile aşama atlayamama; kedi kapasitesi; mevcut evin kat maliyeti, kurulumu ve kayıt devamlılığı; tünelde kesintisiz konum, çıkış sayacı, kayıt determinismi ve kaybolan hedefin ödülsüz iptali; bakımın artışı, korunan son dört altın ve borç birikmemesi; dokuz saniyelik otomasyonun kaydı; v0.2 açılımlarının korunması. Önceki fizik, yatak, kamera, dönüşüm ve v0.1 kayıt testleri de geçti.
-
-Bu sürümde tarayıcı görsel/etkileşim playtesti yapılmadı. Tünelde kedi gövdesinin görünmesi/kaybolması, üç katın okunurluğu ve bakımın oyuncuda yarattığı his kullanıcı playtestiyle değerlendirilmeli. Yeni ırk sprite'ları ve oda perspektifi henüz değiştirilmedi.
+Yeni RGB atlaslarda üretilmiş dama zemin gerçek alpha değildi. Kaynak WebP dokuları korunur; sprite-import.mjs yükleme sırasında yalnızca dıştaki nötr matı saydamlaştırır. İncelenen sahnede kare zemin görünmedi. Tam yön seti/animasyon polish'i ve farklı ekranlarda kenar kontrolü sonraki görsel üretim işidir.
