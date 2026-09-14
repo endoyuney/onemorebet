@@ -1,3 +1,9 @@
+# v0.4.1 doğrulaması — 14 Eylül 2026
+45 test gövdesi V8 içinde import/export ve node:test/assert uyarlayıcısıyla geçti. Terminal olmadığı için node --test çalıştırılmadı. app.js sözdizimi ayrıştırıldı; DOM/tarayıcı, görseller ve FPS doğrulanmadı.
+10/10 para/kedi/beceri enjekte edilmeyen progression koşusu finale ulaştı; muhasebe ve final kayıt doğrulaması geçti. Eşyasız 1532–1732 sn, eşyalı 1163–1445 sn. İnsan playtest süresi değildir.
+Kontrollü denge koşusu ve ayrıntılı sınırlar ../docs/REVIEW_v041.md içinde. Ham sonuçlar progression-v041.json ve review-v041-results.json.
+Önceki sonuçlar aşağıda tarihsel kayıttır.
+
 # v0.4 doğrulama — 14 Eylül 2026
 
 36/36 test geçti. JavaScript sözdizimi ve dosya yolları kontrol edildi. Gerçek Canvas çizim fonksiyonları kullanılarak kutu/salıncak/yatak/arka kedi içeren sahne karesi incelendi; bu bir tarayıcı veya insan playtesti değildir.

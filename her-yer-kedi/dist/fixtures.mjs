@@ -1,6 +1,6 @@
 // Permanent furniture: reusable interactions, never standalone gold production.
 export const FIXTURES={
- box:{cost:30,hold:4.5,cooldown:22,limit:2,width:90,flat:1,percent:0},
+ box:{cost:30,hold:4.5,cooldown:22,limit:2,width:90,flat:0,percent:.05},
  swing:{cost:280,hold:6,cooldown:28,limit:1,width:138,flat:0,percent:.10},
  bed:{cost:100,hold:6,cooldown:30,limit:2,width:89,flat:0,percent:.05},
 };
@@ -21,4 +21,4 @@ export function fixtureMotion(t,c){
  return{x,y,lift:z,angle,phase,dx,dy};
 }
 export const fixtureDuration=kind=>ENTER+FIXTURES[kind].hold+EXIT;
-export function roomBonus(toys){const kinds=new Set(toys.filter(t=>!t.done&&FIXTURES[t.kind]).map(t=>t.kind));let flat=0,percent=0;for(const k of kinds){flat+=FIXTURES[k].flat;percent+=FIXTURES[k].percent;}return{flat,percent:Math.min(.15,percent)};}
+export function roomBonus(toys){const kinds=new Set(toys.filter(t=>!t.done&&FIXTURES[t.kind]).map(t=>t.kind));let flat=0,percent=0;for(const k of kinds){flat+=FIXTURES[k].flat;percent+=FIXTURES[k].percent;}return{flat,percent:Math.min(.20,percent)};}

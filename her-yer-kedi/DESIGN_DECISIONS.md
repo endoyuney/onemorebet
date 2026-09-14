@@ -78,3 +78,8 @@ Futbol topu kullanıcının isteğiyle 50 altınlık basamağa taşındı. Diğe
 İlk simülasyonda her dört pati vuruşundan sonra mola vermek sabit eşyalı oyunu yavaşlattı. Yoğun oyunda tamamlanan oyuncaklara göre mola ve bütün kalıcı eşyalar için ortak 60 sn mola aralığı uygulanınca, beş seed'de sabit eşyalı strateji eşyasız stratejiden daha erken finale ulaştı. Bu tek strateji ailesinin sonucu, optimal ekonomi veya insan playtesti kanıtı değildir.
 
 Kaydırak ve kedi evine asılı top hâlâ sonraki paketin fikirleridir; bu sürüme eklenmedi. Yeni ırklar ve tamamen ortak çapraz oda perspektifi henüz yapılmadı.
+
+## 14 Eylül 2026: v0.4.1 inceleme düzeltmeleri
+Kalıcı eşyanın doğrudan para üretmemesi kararı korunur. Kutu %5, salıncak %10, yatak %5; kopyalar birikmez, toplam %20. Mola, oda tüketilebilir oyuncaklardan boşaldığında seçilir; başlanmış mola tamamlanır. Bu, sürekli doldurulan odada etkileşimleri azaltan bilinçli ve playtest bekleyen bir tercihtir.
+Yeni tüketilebilir oyuncak alımı oda kedisi başına iki ile sınırlandırılır; dönüşüm ürünleri oluşmaya devam eder, kalıcı eşyalar ve eski kayıtlar silinmez. Boş odaya oyuncak bırakmak için en az iki alan bulunur. “Yer açın!” artık nesne kapasitesi değil sekiz kediye yer sağlar. Tırmalama, daha az yerleştirme isteyen uzun oyuncak olarak tanımlanır.
+Tam bulgular, uygulamalar ve doğrulama sınırları docs/REVIEW_v041.md içindedir.

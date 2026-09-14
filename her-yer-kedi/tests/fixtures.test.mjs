@@ -19,13 +19,13 @@ test('box and swing ingress, seated motion and exit resume deterministically wit
 });
 test('fixture bonuses apply once to primary rewards, do not stack copies and retain fractions',()=>{
  const g=new Game();fund(g,5000);grant(g,'balls');for(const [kind,x,y]of [['box',200,400],['box',350,400],['swing',600,400],['bed',850,400]])assert.ok(g.place(kind,x,y));
- assert.deepEqual(g.bonus(),{flat:1,percent:.15});
+ assert.deepEqual(g.bonus(),{flat:0,percent:.20});
  const ball={kind:'football',x:500,y:500};for(let i=0;i<10;i++)g.reward(58,ball,0,'fixture test');
- assert.equal(g.s.ledger.earned,677);assert.equal(g.s.stats.bonusGold,97);assert.ok(g.s.rooms[0].bonusCarry<1e-7);
- g.reward(8,{kind:'mouse',x:400,y:400},0,'chain');assert.equal(g.s.ledger.earned,685);assert.equal(g.s.stats.bonusGold,97);
+ assert.equal(g.s.ledger.earned,696);assert.equal(g.s.stats.bonusGold,116);assert.ok(g.s.rooms[0].bonusCarry<1e-7);
+ g.reward(8,{kind:'mouse',x:400,y:400},0,'chain');assert.equal(g.s.ledger.earned,704);assert.equal(g.s.stats.bonusGold,116);
 });
 test('bonuses belong to their room; bare room and idle furniture add nothing',()=>{
- const g=new Game();grant(g,'room');g.s.rooms.push({name:'Oyun odası',toys:[],autoTimer:0,bonusCarry:0});g.spawn('box',300,400,0);g.reward(3,{kind:'ball',x:500,y:400},1,'other room');assert.equal(g.s.ledger.earned,3);g.reward(3,{kind:'ball',x:500,y:400},0,'home room');assert.equal(g.s.ledger.earned,7);assert.ok(Game.load(g.save()));
+ const g=new Game();grant(g,'room');g.s.rooms.push({name:'Oyun odası',toys:[],autoTimer:0,bonusCarry:0});g.spawn('box',300,400,0);g.reward(3,{kind:'ball',x:500,y:400},1,'other room');assert.equal(g.s.ledger.earned,3);g.reward(3,{kind:'ball',x:500,y:400},0,'home room');assert.equal(g.s.ledger.earned,6);assert.ok(Game.load(g.save()));
 });
 test('moving occupied furniture cancels only the visit and creates no payment',()=>{
  const g=new Game(),t=g.spawn('swing',300,400,0),c=g.s.cats[0];g.beginFixture(c,t);advance(g,2);const earned=g.s.earned,gold=g.s.gold;assert.ok(g.moveFixture(t.id,800,440));assert.equal(c.fixture,null);assert.equal(g.s.stats.swingRides,0);assert.equal(g.s.earned,earned);assert.equal(g.s.gold,gold);assert.ok(Game.load(g.save()));

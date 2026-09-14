@@ -11,3 +11,13 @@
 .fixture-title{font-size:14px;margin:18px 0 4px;color:#514a3e}.fixture-note{font-size:12px;line-height:1.45;margin:0 0 8px}.bonus-panel{display:grid;gap:7px;padding:13px;background:#e5eddd;border:1px solid #bac7ac;border-radius:10px;margin-top:12px;color:#426049}.bonus-panel strong{font-size:13px}.bonus-panel span{font-size:18px;font-weight:750}.bonus-panel small{font-size:12px}#fixtureButtons{display:grid;gap:8px}.shop{overflow-y:auto}.stage{min-height:460px}@media(max-width:900px){#fixtureButtons{grid-template-columns:repeat(3,minmax(0,1fr))}.fixture-title,.fixture-note{margin-left:4px}.stage{min-height:370px}}
 
 @media(min-width:651px){.shop{max-height:calc(100vh - 130px);position:sticky;top:16px}.layout{align-items:start}.shop-bottom{position:sticky;bottom:-17px;background:#f9fbfc;padding-bottom:8px}}@media(max-width:650px){#fixtureButtons{grid-template-columns:repeat(2,minmax(0,1fr))}.progression{flex-wrap:wrap}.bonus-panel,.care-panel{flex:1;min-width:145px}}
+
+/* v0.4.1: expose permanent furniture before locked toy tiers. */
+.shop>.fixture-title{margin-top:0}
+#fixtureButtons{margin-bottom:16px}
+#fixtureButtons .toy-button{min-height:48px;margin:0;padding:6px;grid-template-columns:26px 1fr auto}
+#fixtureButtons .toy-icon{font-size:22px}
+#fixtureButtons .toy-button small{margin-top:2px}
+@media(max-width:650px){.stage{height:clamp(270px,38vh,390px);min-height:270px}#fixtureButtons{grid-template-columns:1fr}.shop>.fixture-title{font-size:16px}}
+
+.toy-info{position:absolute;left:12px;top:65px;max-width:calc(100% - 24px);padding:9px 12px;border:1px solid #bcae90;border-radius:8px;background:#fff9eaf2;color:#3f513d;font-size:14px;pointer-events:none}

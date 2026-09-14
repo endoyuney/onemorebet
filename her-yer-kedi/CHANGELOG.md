@@ -1,3 +1,8 @@
+# v0.4.1 — Denge ve kayıt koruması
+Kutu %5 oda bonusu verir; kalıcı eşyalar oyuncak kalmadığında kullanılır. Yeni alımlar kedi başına iki tüketilebilir oyuncakla sınırlanır, dönüşümler korunur. Kalıcı eşyalar dükkânın başına taşındı. Sörf ve frizbi hareketleri kaydedilebilir; sörf tur sonunda öder. Reddedilen kayıtların kurtarma kopyası alınır; yedekleme başarısızsa üstüne yazılmaz. Eski sayaç ve süreler güncel denge sabitlerine bağımlı değildir. Kalabalık etiketleri tek bilgi paneline alındı, kedileri örten yüksek evler saydamlaşır. Ayrıntılar: docs/REVIEW_v041.md.
+
+Bu güncelleme GitHub kaynak sürümüdür. Bu oturumda canlı demo paketlenip yayınlanamadı.
+
 # v0.4 — Kutu, salıncak ve oda bonusları
 
 Kalıcı eşyalar kediler tarafından kullanılır ve o odadaki oyuncak ödüllerini destekler. Kutu +1, salıncak %10, yatak %5 bonus sağlar. Kopyalar bonusu katlamaz; zincir ödüllerine tekrar bonus uygulanmaz. Yatak artık doğrudan altın vermez. Kutuya giriş/oturma/çıkış, salıncağa çıkış/sallanma/iniş ve aynı odada eşya taşıma eklendi.

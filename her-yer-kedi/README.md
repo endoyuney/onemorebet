@@ -1,3 +1,5 @@
+> Güncel GitHub kaynak yaması: v0.4.1. Değerlendirme, uygulanan değişiklikler ve test sınırları: [İnceleme](docs/REVIEW_v041.md). Canlı demo bu oturumda yeniden yayınlanamadı; kaynakla aynı sürüm olduğunu varsaymayın.
+
 # Her Yer Kedi — v0.4
 
 Yunus'un ilk ticari oyun fikri için kısa, oynanabilir kedi/oyuncak prototipi. Ana konsept 10 Eylül 2026'da v0.1 playtestinden sonra onaylandı. Bu sürüm kullanılan kalıcı eşyaları, oda bonuslarını ve daha ayrıntılı kedi hareketlerini deniyor.

@@ -1,0 +1,308 @@
+{
+  "runtime": "V8 with module and test/assert adapters; not node --test or browser",
+  "tests": [
+    {
+      "file": "engine.test.mjs",
+      "name": "a placed toy is physically completed and pays exactly once",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "skill gates cannot be bypassed with money",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "ball becomes exactly two mice, all rewards paid once",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "house becomes tunnel with one completion payout after ten passes",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "rod and scratch transformations are reachable by natural cat interactions",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "both rooms progress without viewing the second room",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "save/load preserves in-flight actions and deterministic RNG",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "bankrupt state recovers without reset and free ball is cooldown protected",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "invalid and corrupted saves are rejected",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "room capacity and insufficient cash never charge for a failed placement",
+      "ok": true
+    },
+    {
+      "file": "engine.test.mjs",
+      "name": "automation respects gold reserve and stops charging while full",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "three ball types have ordered heights and monetary rewards",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "airborne toys cannot pay and a kick changes motion without charging or paying",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "a ball crosses an open doorway, its chasing cat follows and completes it",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "closed, missed and full-room doorways contain balls without exceeding capacity",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "furniture collision reflects floor-level balls and permits high flight",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "bed persists, cat sleeps voluntarily, no gold is created by waking; save remains deterministic",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "occupied beds are exclusive and sleeping cats are not pushed by other cats",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "a third bed fails without charging, preserving toy space",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "v1 migration retains progress and preserves an existing grounded toy",
+      "ok": true
+    },
+    {
+      "file": "house.test.mjs",
+      "name": "camera maps clicks after pan/zoom, anchors the cursor, and fits both rooms",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "toy progression requires each ball tier before the wand, even with abundant cash",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "cat adoption requires home capacity as well as increasing gold prices",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "buying a floor upgrades existing houses and charges their construction difference",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "tunnel advances continuously, counts only the exit and resumes mid-transit exactly",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "removed tunnel cancels an in-flight interaction without a ghost payout",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "automatic care scales with cat count and preserves four gold without debt",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "care timer and the ninth automation second survive save/load",
+      "ok": true
+    },
+    {
+      "file": "economy.test.mjs",
+      "name": "v2 migration preserves money, cats, old unlocks and is deterministic on the next load",
+      "ok": true
+    },
+    {
+      "file": "fixtures.test.mjs",
+      "name": "furniture-only room never produces gold, while cats voluntarily use every fixture",
+      "ok": true
+    },
+    {
+      "file": "fixtures.test.mjs",
+      "name": "box and swing ingress, seated motion and exit resume deterministically without teleporting",
+      "ok": true
+    },
+    {
+      "file": "fixtures.test.mjs",
+      "name": "fixture bonuses apply once to primary rewards, do not stack copies and retain fractions",
+      "ok": true
+    },
+    {
+      "file": "fixtures.test.mjs",
+      "name": "bonuses belong to their room; bare room and idle furniture add nothing",
+      "ok": true
+    },
+    {
+      "file": "fixtures.test.mjs",
+      "name": "moving occupied furniture cancels only the visit and creates no payment",
+      "ok": true
+    },
+    {
+      "file": "fixtures.test.mjs",
+      "name": "overlapping furniture fails without charging and a seat cannot have two occupants",
+      "ok": true
+    },
+    {
+      "file": "fixtures.test.mjs",
+      "name": "v3 save migrates wider-room positions exactly once and retains wealth and sleeping cat",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "box cannot distract a cat while a consumable remains, including an existing approach",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "two purchases per resident cat, furniture is separate, transformations are not truncated",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "old crowded save loads without deleting toys or money; descendants can overflow purchase limit",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "balance changes do not invalidate bounded old counters, payouts or timers",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "malformed nested saves return null rather than throwing",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "surf ride and frisbee pass move continuously and restore mid-animation",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "removed surf cannot pay a ghost reward",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "rejected save is backed up before autosave can be enabled",
+      "ok": true
+    },
+    {
+      "file": "review-v041.test.mjs",
+      "name": "failed or unverifiable backup disables overwriting the original save",
+      "ok": true
+    }
+  ],
+  "economy": {
+    "baseline": [
+      {
+        "box": false,
+        "netPerMinute": 1773,
+        "seed": 11,
+        "visits": 0
+      },
+      {
+        "box": true,
+        "netPerMinute": 1621.2,
+        "seed": 11,
+        "visits": 9
+      },
+      {
+        "box": false,
+        "netPerMinute": 1949,
+        "seed": 22,
+        "visits": 0
+      },
+      {
+        "box": true,
+        "netPerMinute": 1653.4,
+        "seed": 22,
+        "visits": 9
+      },
+      {
+        "box": false,
+        "netPerMinute": 1757,
+        "seed": 33,
+        "visits": 0
+      },
+      {
+        "box": true,
+        "netPerMinute": 1574.8,
+        "seed": 33,
+        "visits": 9
+      }
+    ],
+    "revised": [
+      {
+        "box": false,
+        "netPerMinute": 1773,
+        "seed": 11,
+        "visits": 0
+      },
+      {
+        "box": true,
+        "netPerMinute": 2371.2,
+        "seed": 11,
+        "visits": 0
+      },
+      {
+        "box": false,
+        "netPerMinute": 1949,
+        "seed": 22,
+        "visits": 0
+      },
+      {
+        "box": true,
+        "netPerMinute": 2235.8,
+        "seed": 22,
+        "visits": 0
+      },
+      {
+        "box": false,
+        "netPerMinute": 1757,
+        "seed": 33,
+        "visits": 0
+      },
+      {
+        "box": true,
+        "netPerMinute": 2119,
+        "seed": 33,
+        "visits": 0
+      }
+    ]
+  }
+}
